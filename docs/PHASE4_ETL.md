@@ -92,8 +92,11 @@ that file even if the build fails. The JSON key stays out of the repository.
 
 ## Evidence still needed
 
-The local dbt build and all 15 data tests passed. The GitHub workflow exists in
-the local checkout but has not yet been pushed to the `origin` remote or run by
-GitHub. Add the key as a repository secret and push the workflow to the default
-branch. Phase 4 remains PARTIAL until two scheduled GitHub Actions runs are
-visible and their outcomes are shared for verification.
+The local dbt build and all 15 data tests passed. The first GitHub run rejected
+the workflow before starting a job because `runner.temp` was referenced in
+job-level `env`, where that context is unavailable. The workflow now references
+`runner.temp` only in step-level environments; GitHub's context rules allow it
+there. Push this correction to the default branch. No ETL job ran during the
+invalid-workflow attempt. Phase 4 remains PARTIAL until two successful
+scheduled GitHub Actions runs are visible and their outcomes are shared for
+verification.

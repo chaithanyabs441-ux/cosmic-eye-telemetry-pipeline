@@ -1,6 +1,6 @@
 # Course Requirements Checklist
 
-**Phase 4 status:** PARTIAL - dbt ETL and 15 data tests pass in BigQuery; two automated GitHub schedule runs remain to be evidenced. The project-wide storage view still returns no rows.
+**Phase 4 status:** PARTIAL - dbt ETL and 15 data tests pass in BigQuery; GitHub initially rejected the workflow before a job started. The runner-temp reference is fixed locally; push it and provide two successful scheduled runs. The project-wide storage view still returns no rows.
 
 | Requirement ID | What will satisfy it | File / query / evidence | Status |
 |---|---|---|---|
@@ -17,7 +17,7 @@
 | R4.3-a | Retrieve warehouse results into at least one NoSQL database | `docs/PROPOSAL.md` scheduled BigQuery-to-Atlas retrieval | Planned |
 | R4.3-b | Justify NoSQL type by access patterns | `docs/PROPOSAL.md` compact region/observation/alert documents in MongoDB | Draft |
 | R4.4-a | Build ETL with dbt/Spark/Airflow/Glue or equivalent | `pipeline/dbt/`; local `dbt build`: 6 table models, 1 view, 15 tests; 22/22 nodes successful | PASS |
-| R4.4-b | Run ETL automatically or on a schedule | `.github/workflows/warehouse-etl.yml`; hourly scheduled workflow is ready, but GitHub repository secret/publication and two scheduled run records are pending | Partial |
+| R4.4-b | Run ETL automatically or on a schedule | `.github/workflows/warehouse-etl.yml`; first GitHub attempt failed workflow validation before starting a job; step-scoped runner-temp fix is local, awaiting push and two successful `schedule` run records | Partial |
 | R4.5 | Clean, deduplicate, validate schema, handle missing/noisy values, convert formats, and engineer fields | `pipeline/dbt/models/`; `pipeline/verify_etl.py`; 415 raw accepted → 28 duplicate excess removed, 7 schema rejections, 380 curated facts; 7 out-of-range latencies nulled, 8 missing targets kept null; 15 tests pass | PASS for pilot evidence; streaming late-event watermark is Phase 6 |
 | R4.6-a | Implement a streaming layer | `docs/PROPOSAL.md` local Redpanda broker | Planned |
 | R4.6-b | Demonstrate windows and alerts/filters | `docs/PROPOSAL.md` three PySpark Structured Streaming queries | Planned |
