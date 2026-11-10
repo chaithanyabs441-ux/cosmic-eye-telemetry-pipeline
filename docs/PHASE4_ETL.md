@@ -65,12 +65,14 @@ and curated partition metadata. The primary data stays in BigQuery.
 
 ## Automated GitHub Actions schedule
 
-`.github/workflows/warehouse-etl.yml` runs hourly (`0 * * * *`) and also
-supports a manual `workflow_dispatch` for setup checks. Hourly scheduling is
-deliberate: one observed dbt build took about 50 seconds and ran 22 model/test
-nodes. Hourly runs keep a private GitHub Free account's included runner-minute
+`.github/workflows/warehouse-etl.yml` runs hourly at minute 17 in the
+`Asia/Kolkata` timezone and also supports a manual `workflow_dispatch` for
+setup checks. Minute 17 avoids the start of the hour, when GitHub documents
+more schedule delays and dropped jobs. Hourly scheduling is also deliberate:
+one observed dbt build took about 50 seconds and ran 22 model/test nodes.
+Hourly runs keep a private GitHub Free account's included runner-minute
 allowance and BigQuery's monthly query-processing allowance safer than a
-15-minute full rebuild. GitHub may delay scheduled runs during high load.
+15-minute full rebuild.
 
 Before the scheduled run can work:
 
