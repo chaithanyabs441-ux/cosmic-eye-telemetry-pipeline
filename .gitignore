@@ -73,3 +73,7 @@ data/
 
 # TypeScript build cache
 *.tsbuildinfo
+
+# dbt generated artifacts (manifest, compiled SQL, run results)
+pipeline/dbt/target/
+pipeline/dbt/logs/

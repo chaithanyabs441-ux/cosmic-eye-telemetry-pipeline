@@ -1,24 +1,24 @@
 # Course Requirements Checklist
 
-**Phase 1 status:** local setup scaffold and walkthrough are prepared; external accounts and credentials remain user setup, and all three smoke checks await the user run. Planned is not a completion claim.
+**Phase 4 status:** PARTIAL - dbt ETL and 15 data tests pass in BigQuery; two automated GitHub schedule runs remain to be evidenced. The project-wide storage view still returns no rows.
 
 | Requirement ID | What will satisfy it | File / query / evidence | Status |
 |---|---|---|---|
 | G-TEAM | Exactly two students; both can explain all stages | `docs/PROPOSAL.md` team fields are placeholders; names still needed | Planned |
-| G-FREE | Free tiers only; monitor usage; tear down resources | `docs/PROPOSAL.md` cost controls; BigQuery Sandbox and Atlas limits in `docs/REFERENCES.md` | Partial — limits checked; no accounts/resources created; budget alert conflict recorded |
+| G-FREE | Free tiers only; monitor usage; tear down resources | Proposal and Phase 1/2 guides; Sandbox, Atlas, and local broker tested; no billing account linked | Partial - monetary GCP budget alert unavailable in billing-disabled Sandbox; teardown remains |
 | G-CITE | Cite datasets, libraries, and external resources | `docs/REFERENCES.md` | Draft |
 | G-PRIVACY | No real personal/sensitive app-usage data | `docs/PROPOSAL.md` synthetic anonymous sessions and provenance design | Planned |
-| R4.1-a | Use synthetic records and/or replay public data | `docs/PROPOSAL.md` public IRSA metadata plus explicitly marked synthetic records | Planned |
-| R4.1-b | Generate in batch and continuous modes | `docs/PROPOSAL.md` generator and broker design | Planned |
-| R4.1-c | State volume, velocity, variety | `docs/PROPOSAL.md` VVV target table; targets not measured yet | Draft |
-| R4.2-a | Store raw and curated data only in a cloud warehouse | `docs/PROPOSAL.md` BigQuery architecture; no warehouse created | Planned |
-| R4.2-b | Do not store the primary dataset locally | `docs/PROPOSAL.md` in-memory batches, bounded broker retention, cleanup plan | Planned |
-| R4.2-c | Verify free-tier limits and use an eligible free option | `docs/REFERENCES.md` BigQuery Sandbox limits; Cloud Billing alert limitation documented | Partial — current limits verified; actual project and usage not verified |
+| R4.1-a | Use synthetic records and/or replay public data | `pipeline/ingest.py`; bounded IRSA QR2 metadata run and explicitly synthetic usage/quality records | PASS |
+| R4.1-b | Generate in batch and continuous modes | `pipeline/ingest.py`; batch and finite-live runs both passed count checks | PASS |
+| R4.1-c | State volume, velocity, variety | `docs/PROPOSAL.md` and pilot measurements in `docs/PHASE2_INGESTION.md` | PASS for stated targets and pilot evidence; million-row scale remains pending |
+| R4.2-a | Store raw and curated data only in a cloud warehouse | `raw.events`, `raw.rejected_events`, and all five curated star-schema tables are in BigQuery; Phase 4 dbt fills curated tables | PASS |
+| R4.2-b | Do not store the primary dataset locally | Generator publishes to temporary Redpanda topics; loader uses in-memory batches; no local history files | PASS by implementation; full-scale run pending |
+| R4.2-c | Verify free-tier limits and use an eligible free option | `docs/REFERENCES.md`; successful Sandbox smoke test and BigQuery pilot loads | PASS for Sandbox use and documented limits |
 | R4.3-a | Retrieve warehouse results into at least one NoSQL database | `docs/PROPOSAL.md` scheduled BigQuery-to-Atlas retrieval | Planned |
 | R4.3-b | Justify NoSQL type by access patterns | `docs/PROPOSAL.md` compact region/observation/alert documents in MongoDB | Draft |
-| R4.4-a | Build ETL with dbt/Spark/Airflow/Glue or equivalent | `docs/PROPOSAL.md` dbt-bigquery SQL + Python validation | Planned |
-| R4.4-b | Run ETL automatically or on a schedule | `docs/PROPOSAL.md` scheduled GitHub Actions design; no workflow yet | Planned |
-| R4.5 | Clean, deduplicate, validate, handle missing/noisy/late values, convert formats, engineer fields | `docs/PROPOSAL.md` Python/Pydantic, dbt, and Spark stream-window plan | Planned |
+| R4.4-a | Build ETL with dbt/Spark/Airflow/Glue or equivalent | `pipeline/dbt/`; local `dbt build`: 6 table models, 1 view, 15 tests; 22/22 nodes successful | PASS |
+| R4.4-b | Run ETL automatically or on a schedule | `.github/workflows/warehouse-etl.yml`; hourly scheduled workflow is ready, but GitHub repository secret/publication and two scheduled run records are pending | Partial |
+| R4.5 | Clean, deduplicate, validate schema, handle missing/noisy values, convert formats, and engineer fields | `pipeline/dbt/models/`; `pipeline/verify_etl.py`; 415 raw accepted → 28 duplicate excess removed, 7 schema rejections, 380 curated facts; 7 out-of-range latencies nulled, 8 missing targets kept null; 15 tests pass | PASS for pilot evidence; streaming late-event watermark is Phase 6 |
 | R4.6-a | Implement a streaming layer | `docs/PROPOSAL.md` local Redpanda broker | Planned |
 | R4.6-b | Demonstrate windows and alerts/filters | `docs/PROPOSAL.md` three PySpark Structured Streaming queries | Planned |
 | R4.6-c | Show streaming results on a live dashboard/output | `docs/PROPOSAL.md` local Streamlit dashboard | Planned |
@@ -46,8 +46,40 @@
 | Phase 1 item | Evidence | Status |
 |---|---|---|
 | Local environment variables and secret/data ignore rules | `.env.example`, `.gitignore` | Prepared; user must keep real values local |
-| Redpanda broker and start/stop scripts | `infra/compose.yaml`, `scripts/start-pipeline.ps1`, `scripts/stop-pipeline.ps1` | Prepared; Docker daemon unavailable for verification in this environment |
-| Cloud, database, Java, Python, Docker, GitHub instructions | `docs/PHASE1_SETUP.md` | Prepared; accounts and installs not verified |
-| BigQuery/MongoDB/Redpanda smoke checks | `pipeline/smoke_test.py` | Prepared; user must run and return redacted output |
+| Redpanda broker and start/stop scripts | `infra/compose.yaml`, PowerShell start and stop scripts; Docker container started for Phase 2 | Prepared; start verified |
+| Cloud, database, Java, Python, Docker, GitHub instructions | `docs/PHASE1_SETUP.md` | BigQuery/Atlas/broker smoke verified; Java/GitHub setup not verified |
+| BigQuery/MongoDB/Redpanda smoke checks | `pipeline/smoke_test.py`; user supplied `Smoke tests: 3/3 PASS` | PASS |
 | Automated scheduler | GitHub Actions design in proposal; actual ETL workflow deferred until Phase 4 code exists | Not implemented in Phase 1 |
+
+## Phase 2 evidence
+
+| Phase 2 item | Evidence | Status |
+|---|---|---|
+| Batch/live generator, provenance, fixed seed, dirty records | `pipeline/ingest.py`; in-memory generator preview plus finite-live BigQuery runs | PASS |
+| Public SPHEREx metadata source | IRSA SIA2 QR2 run `73cbd180434449d2a42b2e10874c2702`; 100 produced, 99 raw landed, 1 rejected | PASS; metadata only, no image products downloaded |
+| Redpanda-to-BigQuery loader and dead-letter table | `pipeline/ingest.py`; pilot rows in `raw.events` and `raw.rejected_events` | PASS |
+| Producer/consumer/warehouse count comparison | Per-run output and independent BigQuery count query; across four runs: 420 produced, 420 consumed, 415 landed, 5 rejected | PASS |
+| Pilot VVV measurement | `docs/PHASE2_INGESTION.md`; 200 events/s publish rate over a 1-second burst; 25.30 events/s end-to-end for that run; exposure, usage, and rejected shapes | PASS; high-volume target pending |
+| No local event history | Generator sends directly to Redpanda; loader uses RAM batches; run topics deleted at exit; data-file formats ignored | PASS by implementation |
+
+## Phase 3 evidence
+
+| Phase 3 item | Evidence | Status |
+|---|---|---|
+| Raw BigQuery layout | `infra/sql/01_raw_tables.sql`, `pipeline/deploy_warehouse.py`; `raw.events`: 415 rows / 385,408 logical bytes; `raw.rejected_events`: 5 rows / 3,339 logical bytes | PASS; both tables partitioned on ingestion date and clustered |
+| Raw partitions | BigQuery `INFORMATION_SCHEMA.PARTITIONS`: `events` partition `20261110`, 415 rows / 385,408 bytes; `rejected_events` partition `20261110`, 5 rows / 3,339 bytes | PASS |
+| Curated star schema | `infra/sql/02_curated_star_schema.sql`, `docs/DATA_DICTIONARY.md`; deployment output confirms five tables, then Phase 4 ETL populated them | PASS |
+| Curated dataset access | `pipeline/deploy_warehouse.py` successfully applied curated DDL | PASS; user granted the required dataset access |
+| Storage snapshot | Visible raw table total 388,747 bytes (0.000362049 GiB); project-wide `TABLE_STORAGE_BY_PROJECT` denied to service account; owner query in `infra/sql/03_verify_warehouse.sql` | Partial; project-wide total pending |
+| R4.2-a raw and curated cloud storage | Raw tables and five curated star-schema tables are deployed in BigQuery; Phase 4 facts are populated | PASS |
+
+## Phase 4 evidence
+
+| Phase 4 item | Evidence | Status |
+|---|---|---|
+| dbt project/profile parse | `pipeline\\.venv\\Scripts\\python.exe pipeline\\run_etl.py --parse-only` → `ETL project parse: PASS` | PASS |
+| BigQuery raw-to-curated build | `pipeline\\.venv\\Scripts\\python.exe pipeline\\run_etl.py` → two corrected-partition builds passed `22/22` nodes each; 6 table models, 1 view, 15 tests; second build completed in 55.77 seconds with unchanged fact counts | PASS |
+| Deduplication and schema validation | `pipeline\\verify_etl.py` → exposure 219 rows/200 distinct (19 duplicates); usage 196/187 (9 duplicates); 7 `latency_wrong_type` rejections | PASS |
+| Curated data | `pipeline\\verify_etl.py` → 200 exposure facts + 180 usage facts; 7 out-of-range latencies represented as NULL; all current fact partition timestamps are `ingested_at`, with 60-day expiration | PASS |
+| Automated schedule | `.github/workflows/warehouse-etl.yml` hourly schedule and temporary secret-file cleanup | Workflow implemented; waiting for GitHub publication/secret setup and two successful `schedule`-triggered run records |
 

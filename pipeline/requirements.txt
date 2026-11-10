@@ -5,6 +5,7 @@ google-auth
 pymongo
 confluent-kafka
 python-dotenv
+requests
 pydantic
 pyspark
 dbt-bigquery

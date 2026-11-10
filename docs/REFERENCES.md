@@ -35,15 +35,20 @@
 - MongoDB Atlas, [Free Cluster Limits](https://www.mongodb.com/docs/atlas/reference/free-shared-limitations/) — current documented limits include 0.5 GB storage, 100 read/write operations per second, one free cluster per project, no configurable backups, and no automatic storage expansion.
 - GitHub, [included plan usage](https://docs.github.com/en/billing/reference/product-usage-included) and [Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions) — GitHub Free includes 2,000 standard-runner minutes/month for private repos; public standard-runner use is free. Private overage may be charged if billing is enabled.
 - GitHub, [workflow schedule syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax) and [scheduled workflow reliability notes](https://docs.github.com/en/enterprise-cloud%40latest/actions/monitoring-and-troubleshooting-workflows/troubleshooting-workflows) — shortest supported interval is 5 minutes; scheduled jobs can be delayed under load.
+- GitHub, [using Actions secrets](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets) — repository-secret setup and workflow access.
 - Redpanda, [licensing overview](https://docs.redpanda.com/streaming/current/get-started/licensing/overview/) — Community Edition is free/source-available under the Business Source License, with restrictions; do not enable Enterprise-only features for this project.
 - Redpanda, [Docker quickstart](https://docs.redpanda.com/streaming/current/get-started/quick-start/) — development quickstart prerequisite of at least 4 GiB free memory before starting containers.
 - Apache Spark, [Structured Streaming programming guide](https://spark.apache.org/docs/latest/streaming/index.html), [Kafka integration guide](https://spark.apache.org/docs/latest/structured-streaming-kafka-integration.html), and [current platform overview](https://spark.apache.org/docs/latest/) — proposed local stream processor; current docs list Windows support and Java 17/21/25.
 - Confluent, [Cloud trial](https://docs.confluent.io/cloud/current/get-started/free-trial.html) and [billing FAQ](https://docs.confluent.io/cloud/current/billing/billing-faq.html) — $400 credit lasting up to 30 days, payment method required to provision resources, and no hard dollar spending cap; not selected for a free-only project.
 - dbt Labs, [BigQuery adapter setup](https://docs.getdbt.com/docs/local/connect-data-platform/bigquery-setup) and [supported data platforms](https://docs.getdbt.com/docs/supported-data-platforms) — dbt SQL workflow and BigQuery adapter reference.
+- dbt Labs, [BigQuery adapter configuration](https://docs.getdbt.com/reference/resource-configs/bigquery-configs) — service-account profiles, table materializations, partitioning, and clustering configuration.
+- Google Cloud, [JSON functions](https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/json_functions) and [conversion functions](https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/conversion_functions) — JSON field extraction and safe type conversion in ETL SQL.
 - Streamlit, [documentation](https://docs.streamlit.io/) — proposed local dashboard framework.
 - Docker, [Compose documentation](https://docs.docker.com/compose/) — proposed local broker lifecycle and cleanup.
 
 ## Pipeline libraries proposed
+
+- Google Cloud BigQuery, [partitioned tables](https://docs.cloud.google.com/bigquery/docs/creating-partitioned-tables), [clustered tables](https://docs.cloud.google.com/bigquery/docs/creating-clustered-tables), [managing clustered tables](https://docs.cloud.google.com/bigquery/docs/manage-clustered-tables), [`INFORMATION_SCHEMA.PARTITIONS`](https://docs.cloud.google.com/bigquery/docs/information-schema-partitions), and [`INFORMATION_SCHEMA.TABLE_STORAGE`](https://docs.cloud.google.com/bigquery/docs/information-schema-table-storage) â€” warehouse layout and measured metadata queries.
 
 - Python, [Python 3 documentation](https://docs.python.org/3/).
 - Pydantic, [documentation](https://docs.pydantic.dev/latest/) — event schema validation.

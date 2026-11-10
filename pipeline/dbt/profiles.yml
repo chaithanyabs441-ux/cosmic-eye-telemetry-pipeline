@@ -1,0 +1,14 @@
+cosmic_eye_telemetry:
+  target: sandbox
+  outputs:
+    sandbox:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      dataset: curated
+      location: "{{ env_var('BIGQUERY_LOCATION', 'US') }}"
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
+      threads: 2
+      priority: batch
+      job_retries: 1
+      job_execution_timeout_seconds: 300

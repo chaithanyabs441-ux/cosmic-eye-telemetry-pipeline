@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: preprocessing_rejections
+    description: Rows rejected by curated schema validation; raw ingestion rejects remain in raw.rejected_events.
+    columns:
+      - name: rejection_reason
+        tests: [not_null]
+  - name: dim_band
+    columns:
+      - name: band_id
+        tests: [not_null, unique]
+  - name: dim_region
+    columns:
+      - name: region_key
+        tests: [not_null, unique]
+  - name: dim_date
+    columns:
+      - name: date_key
+        tests: [not_null, unique]
+      - name: full_date
+        tests: [not_null, unique]
+  - name: fact_exposures
+    columns:
+      - name: event_id
+        tests: [not_null, unique]
+      - name: is_synthetic
+        tests: [not_null]
+  - name: fact_usage_events
+    columns:
+      - name: event_id
+        tests: [not_null, unique]
+      - name: is_synthetic
+        tests: [not_null]
