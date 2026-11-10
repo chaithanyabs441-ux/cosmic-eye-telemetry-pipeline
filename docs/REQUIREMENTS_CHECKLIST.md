@@ -14,8 +14,8 @@
 | R4.2-a | Store raw and curated data only in a cloud warehouse | `raw.events`, `raw.rejected_events`, and all five curated star-schema tables are in BigQuery; Phase 4 dbt fills curated tables | PASS |
 | R4.2-b | Do not store the primary dataset locally | Generator publishes to temporary Redpanda topics; loader uses in-memory batches; no local history files | PASS by implementation; full-scale run pending |
 | R4.2-c | Verify free-tier limits and use an eligible free option | `docs/REFERENCES.md`; successful Sandbox smoke test and BigQuery pilot loads | PASS for Sandbox use and documented limits |
-| R4.3-a | Retrieve warehouse results into at least one NoSQL database | `docs/PROPOSAL.md` scheduled BigQuery-to-Atlas retrieval | Planned |
-| R4.3-b | Justify NoSQL type by access patterns | `docs/PROPOSAL.md` compact region/observation/alert documents in MongoDB | Draft |
+| R4.3-a | Retrieve warehouse results into at least one NoSQL database | `pipeline/sync_mongodb.py`; BigQuery daily summary groups 161 exposures + 173 usage; Mongo stored exactly 161 + 173 documents | PASS |
+| R4.3-b | Justify NoSQL type by access patterns | `docs/PHASE5_NOSQL.md`; compact region/band and region/event documents with compound indexes | PASS |
 | R4.4-a | Build ETL with dbt/Spark/Airflow/Glue or equivalent | `pipeline/dbt/`; local `dbt build`: 6 table models, 1 view, 15 tests; 22/22 nodes successful | PASS |
 | R4.4-b | Run ETL automatically or on a schedule | `.github/workflows/warehouse-etl.yml`; manual run reported successful; no successful `schedule` event observed; user elected to proceed while scheduled proof remains pending | Partial |
 | R4.5 | Clean, deduplicate, validate schema, handle missing/noisy values, convert formats, and engineer fields | `pipeline/dbt/models/`; `pipeline/verify_etl.py`; 415 raw accepted → 28 duplicate excess removed, 7 schema rejections, 380 curated facts; 7 out-of-range latencies nulled, 8 missing targets kept null; 15 tests pass | PASS for pilot evidence; streaming late-event watermark is Phase 6 |
@@ -81,5 +81,15 @@
 | BigQuery raw-to-curated build | `pipeline\\.venv\\Scripts\\python.exe pipeline\\run_etl.py` → two corrected-partition builds passed `22/22` nodes each; 6 table models, 1 view, 15 tests; second build completed in 55.77 seconds with unchanged fact counts | PASS |
 | Deduplication and schema validation | `pipeline\\verify_etl.py` → exposure 219 rows/200 distinct (19 duplicates); usage 196/187 (9 duplicates); 7 `latency_wrong_type` rejections | PASS |
 | Curated data | `pipeline\\verify_etl.py` → 200 exposure facts + 180 usage facts; 7 out-of-range latencies represented as NULL; all current fact partition timestamps are `ingested_at`, with 60-day expiration | PASS |
-| Automated schedule | `.github/workflows/warehouse-etl.yml` hourly schedule, Node.js 24 compatible actions, and temporary secret-file cleanup | Manual workflow run reported successful; two successful `schedule`-triggered runs not yet observed; proceed with later phases by user choice, revisit before final audit |
+| Automated schedule | `.github/workflows/warehouse-etl.yml` hourly schedule, Node.js 24 compatible actions, BigQuery dbt build then Mongo sync, and temporary secret-file cleanup | Manual workflow run reported successful; MongoDB sync is verified locally; GitHub `MONGODB_URI` secret/push and two successful scheduled runs remain pending; user elected to proceed, revisit before final audit |
+
+## Phase 5 evidence
+
+| Phase 5 item | Evidence | Status |
+|---|---|---|
+| Incremental and idempotent BigQuery-to-MongoDB retrieval | `pipeline/sync_mongodb.py`; one-day overlap and stable partition/group `_id`; repeat run upserted 0 and changed 0 docs | PASS |
+| Exposure summaries | BigQuery returned 161 daily region/band groups; Mongo contains 161 summary documents | PASS |
+| Usage summaries | BigQuery returned 173 daily region/event groups; Mongo contains 173 summary documents | PASS |
+| Mongo indexes and sample documents | `docs/PHASE5_NOSQL.md`; indexes `region_band_day_lookup`, `region_event_day_lookup`; sample aggregate docs captured | PASS |
+| Automated BigQuery-to-Mongo schedule | Workflow step added; GitHub secret and push not yet verified | Partial |
 
