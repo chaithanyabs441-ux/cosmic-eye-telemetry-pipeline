@@ -1,6 +1,6 @@
 # Course Requirements Checklist
 
-**Phase 4 status:** PARTIAL - dbt ETL and 15 data tests pass in BigQuery; GitHub initially rejected the workflow before a job started. The runner-temp reference and minute-17 India-time schedule are fixed locally; push the update and provide two successful scheduled runs. The project-wide storage view still returns no rows.
+**Phase 4 status:** PARTIAL - dbt ETL and 15 data tests pass in BigQuery; the user reports the GitHub manual run passes. The workflow now uses Node.js 24 compatible action versions in source. Two successful scheduled runs have not been observed; user elected to continue later phases while this evidence remains open. Push the action-version update, verify the warning is gone in GitHub, and still collect two scheduled-success records before final audit. The project-wide storage view still returns no rows.
 
 | Requirement ID | What will satisfy it | File / query / evidence | Status |
 |---|---|---|---|
@@ -17,7 +17,7 @@
 | R4.3-a | Retrieve warehouse results into at least one NoSQL database | `docs/PROPOSAL.md` scheduled BigQuery-to-Atlas retrieval | Planned |
 | R4.3-b | Justify NoSQL type by access patterns | `docs/PROPOSAL.md` compact region/observation/alert documents in MongoDB | Draft |
 | R4.4-a | Build ETL with dbt/Spark/Airflow/Glue or equivalent | `pipeline/dbt/`; local `dbt build`: 6 table models, 1 view, 15 tests; 22/22 nodes successful | PASS |
-| R4.4-b | Run ETL automatically or on a schedule | `.github/workflows/warehouse-etl.yml`; manual run passed, but no schedule run appeared at the top of the hour; cron moved to minute 17 Asia/Kolkata; awaiting push and two successful `schedule` run records | Partial |
+| R4.4-b | Run ETL automatically or on a schedule | `.github/workflows/warehouse-etl.yml`; manual run reported successful; no successful `schedule` event observed; user elected to proceed while scheduled proof remains pending | Partial |
 | R4.5 | Clean, deduplicate, validate schema, handle missing/noisy values, convert formats, and engineer fields | `pipeline/dbt/models/`; `pipeline/verify_etl.py`; 415 raw accepted → 28 duplicate excess removed, 7 schema rejections, 380 curated facts; 7 out-of-range latencies nulled, 8 missing targets kept null; 15 tests pass | PASS for pilot evidence; streaming late-event watermark is Phase 6 |
 | R4.6-a | Implement a streaming layer | `docs/PROPOSAL.md` local Redpanda broker | Planned |
 | R4.6-b | Demonstrate windows and alerts/filters | `docs/PROPOSAL.md` three PySpark Structured Streaming queries | Planned |
@@ -81,5 +81,5 @@
 | BigQuery raw-to-curated build | `pipeline\\.venv\\Scripts\\python.exe pipeline\\run_etl.py` → two corrected-partition builds passed `22/22` nodes each; 6 table models, 1 view, 15 tests; second build completed in 55.77 seconds with unchanged fact counts | PASS |
 | Deduplication and schema validation | `pipeline\\verify_etl.py` → exposure 219 rows/200 distinct (19 duplicates); usage 196/187 (9 duplicates); 7 `latency_wrong_type` rejections | PASS |
 | Curated data | `pipeline\\verify_etl.py` → 200 exposure facts + 180 usage facts; 7 out-of-range latencies represented as NULL; all current fact partition timestamps are `ingested_at`, with 60-day expiration | PASS |
-| Automated schedule | `.github/workflows/warehouse-etl.yml` hourly schedule and temporary secret-file cleanup | Workflow implemented; waiting for GitHub publication/secret setup and two successful `schedule`-triggered run records |
+| Automated schedule | `.github/workflows/warehouse-etl.yml` hourly schedule, Node.js 24 compatible actions, and temporary secret-file cleanup | Manual workflow run reported successful; two successful `schedule`-triggered runs not yet observed; proceed with later phases by user choice, revisit before final audit |
 

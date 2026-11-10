@@ -74,6 +74,11 @@ Hourly runs keep a private GitHub Free account's included runner-minute
 allowance and BigQuery's monthly query-processing allowance safer than a
 15-minute full rebuild.
 
+The workflow uses `actions/checkout@v7` and `actions/setup-python@v7` to run
+their Node.js 24 action runtimes and avoid GitHub's Node.js 20 deprecation
+warning. This version change must be pushed to the default branch before it
+affects GitHub-hosted runs.
+
 Before the scheduled run can work:
 
 1. Push this workflow and the dbt files to the repository's **default branch**.
@@ -85,9 +90,11 @@ Before the scheduled run can work:
    never paste it into chat, commit it, or add it to a normal text file.
 4. Confirm the service account has BigQuery Job User on the project and BigQuery
    Data Editor on the `raw` and `curated` datasets.
-5. In **Actions**, verify one workflow run completes. For the requirement that
-   runs happen automatically, wait for and capture **two successful runs whose
-   event is `schedule`**. A `workflow_dispatch` run is only a manual smoke check.
+5. In **Actions**, verify one workflow run completes. The user reports that a
+   manual `workflow_dispatch` run succeeds. Two successful runs whose event is
+   `schedule` have not been observed yet; those are still required evidence for
+   R4.4-b, but the user has chosen to continue other project phases while this
+   schedule check remains open. A manual run does not count as scheduled proof.
 
 The workflow writes the secret to a temporary runner file, runs dbt, and removes
 that file even if the build fails. The JSON key stays out of the repository.
@@ -98,7 +105,9 @@ The local dbt build and all 15 data tests passed. The first GitHub run rejected
 the workflow before starting a job because `runner.temp` was referenced in
 job-level `env`, where that context is unavailable. The workflow now references
 `runner.temp` only in step-level environments; GitHub's context rules allow it
-there. Push this correction to the default branch. No ETL job ran during the
-invalid-workflow attempt. Phase 4 remains PARTIAL until two successful
-scheduled GitHub Actions runs are visible and their outcomes are shared for
-verification.
+there. The user reports that manual GitHub runs now succeed. The deprecation
+warning is addressed in the workflow source by upgrading checkout and setup-
+python to v7; it will be verified on GitHub after that edit is pushed. Phase 4
+remains PARTIAL because two successful scheduled runs have not been observed.
+The user has elected to proceed with later phases while this evidence remains
+open; it must be revisited before the final checklist is complete.
