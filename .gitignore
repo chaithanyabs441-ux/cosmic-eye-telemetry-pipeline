@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Environment
+.env
+.env.local
+!.env.example
+secrets/
+*.pem
+*.key
+*-service-account*.json
+service-account*.json
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Data / temp
+*.fits
+*.fits.gz
+tmp/
+temp/
+data/
+.cache/
+spark-checkpoints/
+*.checkpoint/
+*.jsonl
+*.csv
+*.parquet
+*.sqlite
+*.db
+*.avro
+*.orc
+
+# Logs
+*.log
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+*service-account*.json
+
+# Python environments
+.venv/
+venv/
+pipeline/.venv/
+
+# Generated data and temporary files
+__pycache__/
+*.py[cod]
+data/
+
+# TypeScript build cache
+*.tsbuildinfo

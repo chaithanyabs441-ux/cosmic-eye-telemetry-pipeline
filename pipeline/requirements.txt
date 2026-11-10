@@ -1,0 +1,11 @@
+# Install with the pipeline virtual environment, not the existing backend env.
+# Python 3.11 is required by the current Spark plan.
+google-cloud-bigquery
+google-auth
+pymongo
+confluent-kafka
+python-dotenv
+pydantic
+pyspark
+dbt-bigquery
+streamlit
