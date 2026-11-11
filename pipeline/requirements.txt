@@ -7,6 +7,7 @@ confluent-kafka
 python-dotenv
 requests
 pydantic
-pyspark
+pyspark==4.3.0
 dbt-bigquery
-streamlit
+streamlit>=1.37
+pandas

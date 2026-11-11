@@ -32,6 +32,9 @@ Thumbs.db
 .idea/
 *.swp
 
+# Local GitHub Actions self-hosted runner binaries and credentials
+actions-runner/
+
 # Data / temp
 *.fits
 *.fits.gz

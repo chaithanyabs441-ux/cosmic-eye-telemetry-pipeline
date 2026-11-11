@@ -1,0 +1,3 @@
+pyspark==4.3.0
+pymongo
+python-dotenv

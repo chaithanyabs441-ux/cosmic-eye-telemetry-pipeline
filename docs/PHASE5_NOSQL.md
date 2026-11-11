@@ -45,23 +45,28 @@ identifiers. Repeat the command to check idempotency: document counts should
 remain unchanged, with zero or few documents modified if BigQuery did not
 change.
 
-## Scheduled run
+## Run the sync when needed
 
-The GitHub Actions workflow runs dbt first, then runs this sync job. Before the
-workflow can sync MongoDB, add a repository secret named `MONGODB_URI`:
+GitHub Actions runs the scheduled BigQuery ETL on a GitHub-hosted runner. It
+does not connect to Atlas: the hosted runner's public IP changes, while Atlas
+only accepts connections from addresses on its allow-list. GitHub's public
+Meta API returned 8,350 Actions IP ranges on 2026-11-11; Atlas permits at most
+200 project IP entries. GitHub advises against using its hosted-runner ranges
+as allow-lists. Do not solve this by allowing `0.0.0.0/0`.
 
-1. Open the GitHub repository, then choose **Settings → Secrets and variables →
-   Actions → New repository secret**.
-2. Enter `MONGODB_URI` as the name and paste the Atlas connection URI into the
-   secret value field. Save it there; do not place it in the workflow YAML.
-3. Push the workflow and pipeline changes to the default branch, then use
-   **Actions → BigQuery raw-to-curated ETL → Run workflow** once.
-4. A successful run should show steps named **Build curated tables and run
-   data-quality tests** and **Sync compact curated summaries to MongoDB Atlas**.
+The course requirement R4.3 asks us to retrieve warehouse results and load
+them into NoSQL; it does not require that MongoDB copy to run on a schedule.
+That retrieval is already verified locally. To refresh MongoDB after the
+scheduled dbt build, run this in PowerShell from the repository root while the
+PC's public IP remains on the Atlas list:
 
-The MongoDB secret is only available to the sync step. The workflow creates
-the BigQuery service-account file in the hosted runner's temporary directory
-and removes it in the cleanup step.
+```powershell
+pipeline\.venv\Scripts\python.exe pipeline\sync_mongodb.py
+```
+
+The BigQuery service-account path and MongoDB URI are read from the local `.env`
+file. They are not needed as GitHub repository secrets for the scheduled
+workflow. Keep the BigQuery key in the GitHub secret used by the dbt build.
 
 ## Verification record
 
@@ -88,6 +93,9 @@ This verifies the stable-key upsert is idempotent for an unchanged source
 partition. The two BigQuery aggregate queries processed 16,920 and 9,345 bytes
 respectively on both runs.
 
-GitHub scheduled sync run: pending. Add the repository `MONGODB_URI` secret and
-push the workflow change before the Actions job can run the MongoDB step. The
-Phase 4 requirement for two successful scheduled runs also remains open.
+The user reported a green GitHub-hosted run while Atlas temporarily allowed
+`0.0.0.0/0`. Later scheduled runs failed at the Mongo sync with a TLS handshake
+error after that wildcard was removed. The workflow now keeps the scheduled
+BigQuery ETL on a GitHub-hosted runner and excludes the Mongo sync. The local
+warehouse-to-Mongo sync remains verified; scheduled Mongo sync is intentionally
+not part of this free, hosted-runner design.

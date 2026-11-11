@@ -27,3 +27,30 @@ services:
       timeout: 10s
       retries: 12
     restart: unless-stopped
+  spark-streaming:
+    profiles: ["streaming"]
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.streaming
+    command: ["python", "-u", "/app/pipeline/streaming.py"]
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
+      KAFKA_LIVE_TOPIC: ${KAFKA_LIVE_TOPIC:-cosmic-eye-live}
+      MONGODB_URI: ${MONGODB_URI:?Set MONGODB_URI in the repository .env file}
+      MONGODB_DATABASE: ${MONGODB_DATABASE:-cosmic_eye}
+      PYSPARK_PYTHON: python
+      PYSPARK_DRIVER_PYTHON: python
+      SPARK_HOME: /opt/python/pyspark
+      PYTHONPATH: /opt/python
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    mem_limit: 3g
+    volumes:
+      - spark-checkpoints:/app/spark-checkpoints
+      - ../pipeline/.venv/Lib/site-packages/pyspark:/opt/python/pyspark:ro
+      - ../pipeline/.venv/Lib/site-packages/py4j:/opt/python/py4j:ro
+    restart: "no"
+
+volumes:
+  spark-checkpoints:

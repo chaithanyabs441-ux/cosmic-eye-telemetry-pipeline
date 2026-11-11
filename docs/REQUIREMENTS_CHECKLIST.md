@@ -10,7 +10,7 @@
 | G-PRIVACY | No real personal/sensitive app-usage data | `docs/PROPOSAL.md` synthetic anonymous sessions and provenance design | Planned |
 | R4.1-a | Use synthetic records and/or replay public data | `pipeline/ingest.py`; bounded IRSA QR2 metadata run and explicitly synthetic usage/quality records | PASS |
 | R4.1-b | Generate in batch and continuous modes | `pipeline/ingest.py`; batch and finite-live runs both passed count checks | PASS |
-| R4.1-c | State volume, velocity, variety | `docs/PROPOSAL.md` and pilot measurements in `docs/PHASE2_INGESTION.md` | PASS for stated targets and pilot evidence; million-row scale remains pending |
+| R4.1-c | State volume, velocity, variety | `docs/PROPOSAL.md`, `docs/PHASE2_INGESTION.md`, and Phase 8 scale run: 1,006,082 raw event rows; completed continuation measured 946.84 events/s end-to-end; exposure, usage, reject shapes | PASS for measured course-scale run; higher continuous-live target remains a separate demo limit |
 | R4.2-a | Store raw and curated data only in a cloud warehouse | `raw.events`, `raw.rejected_events`, and all five curated star-schema tables are in BigQuery; Phase 4 dbt fills curated tables | PASS |
 | R4.2-b | Do not store the primary dataset locally | Generator publishes to temporary Redpanda topics; loader uses in-memory batches; no local history files | PASS by implementation; full-scale run pending |
 | R4.2-c | Verify free-tier limits and use an eligible free option | `docs/REFERENCES.md`; successful Sandbox smoke test and BigQuery pilot loads | PASS for Sandbox use and documented limits |
@@ -36,8 +36,8 @@
 | R7-ARCH | Prioritize architecture and design (20%) | Phase 0 proposal and approval gate | In progress |
 | R7-IMPL | Complete all pipeline stages (25%) | Later implementation evidence | Not started |
 | R7-STREAM | Prioritize real-time streaming (20%) | Broker, continuous calculations, alert, and dashboard plan | Planned |
-| R7-SCALE | Report scale/volume/technical depth (10%) | VVV and measured scale evidence planned | Planned |
-| R7-INSIGHTS | Provide useful insights and visualization (10%) | Streamlit live dashboard and warehouse query insights planned | Planned |
+| R7-SCALE | Report scale/volume/technical depth (10%) | `docs/PHASE8_SCALE_INSIGHTS.md`: 1,006,082 BigQuery raw events; 946.84 events/s completed-run rate; 1.12 GiB raw+curated; Atlas 0.51 MiB data+indexes | PASS |
+| R7-INSIGHTS | Provide useful insights and visualization (10%) | `dashboard/pages/1_Warehouse_Insights.py`; five live BigQuery charts and captured takeaways in `docs/PHASE8_SCALE_INSIGHTS.md` | PASS |
 | R7-REPORT | Complete report (10%) | Phase 9 report planned | Not started |
 | R7-DEMO | Prepare presentation/demo (5%) | Phase 9 materials and team rehearsal planned | Not started |
 
@@ -113,4 +113,16 @@
 | Query appendix | `docs/QUERY_APPENDIX.md`; live samples and timings captured for warehouse and Atlas queries; streaming query sample counts and observed batch timing documented | PASS for local appendix |
 | Query scripts available for GitHub | `git push origin main` â†’ `c8b6eea..1e7c3c7 main -> main`; query files and appendix included; `actions-runner/` was not included | PASS |
 | Live query demo instructions | `queries/README.md`; run one or all warehouse queries, all Mongo queries, or inspect current streaming state | PASS |
+
+## Phase 8 evidence
+
+| Phase 8 item | Evidence | Status |
+|---|---|---|
+| Scale volume | BigQuery metadata: `raw.events=1,006,082`, `raw.rejected_events=14,338`; accepted plus rejected rows total 1,020,420; `docs/PHASE8_SCALE_INSIGHTS.md` records the interrupted partial attempt transparently | PASS for ≥1M historical raw event rows |
+| Measured ingestion rate | Completed run ID `5ee403f102244aaf93a73c8869e987d7`: 860,000 produced/consumed; 845,667 landed + 14,333 rejected; 87 load jobs; 959.49 publish events/s and 946.84 end-to-end events/s | PASS |
+| Preprocessing and ETL at scale | `pipeline\\.venv\\Scripts\\python.exe pipeline\\run_etl.py` â†’ 22/22 nodes successful in 54.85s; `pipeline\\verify_etl.py` â†’ 511,456 exposures, 460,310 usage facts, 17,052 preprocessing rejects | PASS |
+| BigQuery usage against free limit | Read-only table metadata: raw 0.871 GiB + curated 0.246 GiB = about 1.12 GiB versus Sandbox 10 GiB lifetime storage; dbt model jobs reported 700.9–861.9 MiB scans; reference docs record 1 TiB monthly query allowance | PASS |
+| MongoDB Atlas usage against free limit | `dbStats`: 210,248 data bytes, 229,376 storage bytes, 303,104 index bytes; 5 collections and 9 indexes; pipeline collection counts 161, 173, 343, 33 | PASS |
+| Five business-insight visualizations | `dashboard\\pages\\1_Warehouse_Insights.py`; AppTest: 0 exceptions, 5 chart headings, actual metrics 511,456 exposures / 460,310 app events / 10 active regions, and five data-derived takeaways recorded in `docs/PHASE8_SCALE_INSIGHTS.md` | PASS |
+| Dashboard and stream resumed | Temporary insights app HTTP 200; main dashboard health HTTP 200; Redpanda healthy and Spark container restarted after the scale run | PASS |
 

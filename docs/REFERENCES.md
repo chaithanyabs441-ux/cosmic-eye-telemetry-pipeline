@@ -38,12 +38,13 @@
 - GitHub, [using Actions secrets](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets) — repository-secret setup and workflow access.
 - Redpanda, [licensing overview](https://docs.redpanda.com/streaming/current/get-started/licensing/overview/) — Community Edition is free/source-available under the Business Source License, with restrictions; do not enable Enterprise-only features for this project.
 - Redpanda, [Docker quickstart](https://docs.redpanda.com/streaming/current/get-started/quick-start/) — development quickstart prerequisite of at least 4 GiB free memory before starting containers.
-- Apache Spark, [Structured Streaming programming guide](https://spark.apache.org/docs/latest/streaming/index.html), [Kafka integration guide](https://spark.apache.org/docs/latest/structured-streaming-kafka-integration.html), and [current platform overview](https://spark.apache.org/docs/latest/) — proposed local stream processor; current docs list Windows support and Java 17/21/25.
+- Apache Spark, [Structured Streaming programming guide](https://spark.apache.org/docs/4.3.0/streaming/index.html), [Spark 4.3.0 Kafka integration guide](https://spark.apache.org/docs/4.3.0/structured-streaming-kafka-integration.html), and [Spark 4.3.0 platform overview](https://spark.apache.org/docs/4.3.0/) — local stream processor; Java 17 is supported, and the matching connector is `spark-sql-kafka-0-10_2.13:4.3.0`.
 - Confluent, [Cloud trial](https://docs.confluent.io/cloud/current/get-started/free-trial.html) and [billing FAQ](https://docs.confluent.io/cloud/current/billing/billing-faq.html) — $400 credit lasting up to 30 days, payment method required to provision resources, and no hard dollar spending cap; not selected for a free-only project.
 - dbt Labs, [BigQuery adapter setup](https://docs.getdbt.com/docs/local/connect-data-platform/bigquery-setup) and [supported data platforms](https://docs.getdbt.com/docs/supported-data-platforms) — dbt SQL workflow and BigQuery adapter reference.
 - dbt Labs, [BigQuery adapter configuration](https://docs.getdbt.com/reference/resource-configs/bigquery-configs) — service-account profiles, table materializations, partitioning, and clustering configuration.
 - Google Cloud, [JSON functions](https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/json_functions) and [conversion functions](https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/conversion_functions) — JSON field extraction and safe type conversion in ETL SQL.
 - Streamlit, [documentation](https://docs.streamlit.io/) — proposed local dashboard framework.
+- pandas, [DataFrame documentation](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html) — tabular chart data in the warehouse-insights page.
 - Docker, [Compose documentation](https://docs.docker.com/compose/) — proposed local broker lifecycle and cleanup.
 
 ## Pipeline libraries proposed
@@ -55,6 +56,9 @@
 - Confluent, [Python Kafka client](https://docs.confluent.io/kafka-clients/python/current/overview.html) — Kafka API client for Redpanda production/consumption; using the client does not require Confluent Cloud.
 - Google Cloud, [BigQuery Python client reference](https://cloud.google.com/python/docs/reference/bigquery/latest) — batch load and query jobs.
 - MongoDB, [PyMongo driver documentation](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/) — BigQuery result retrieval, indexes, and dashboard reads.
+- GitHub, [GitHub-hosted runner IP guidance](https://docs.github.com/en/actions/reference/runners/github-hosted-runners), [runner Meta API](https://api.github.com/meta), and [Actions included usage](https://docs.github.com/en/billing/reference/product-usage-included) — hosted runner network ranges and the Free-plan monthly minute allowance.
+- GitHub, [larger runner documentation](https://docs.github.com/en/actions/concepts/runners/larger-runners) — static IP ranges require larger runners, available on Team or Enterprise plans.
+- MongoDB Atlas, [IP access list documentation](https://www.mongodb.com/docs/atlas/security/ip-access-list/) — trusted cluster client addresses and the project IP-list entry limit.
 - dbt Labs, [dbt-bigquery adapter](https://pypi.org/project/dbt-bigquery/) — installation/version source for the adapter package.
 
 ## Existing application libraries (cited as project background)
