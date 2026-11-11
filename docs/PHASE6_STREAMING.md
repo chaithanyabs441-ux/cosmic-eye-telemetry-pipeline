@@ -27,12 +27,23 @@ Spark runs three concurrent Structured Streaming queries:
 2. Five-minute sliding usage latency, p95 latency, and HTTP error counts by
    region. Both aggregation queries use a two-minute event-time watermark to
    accept events that arrive late and discard events later than the watermark.
-3. Event-triggered alerts for exposure noise/saturation thresholds and usage
-   latency/HTTP errors. Alert documents use `event_id` as their stable key.
+3. Event-triggered alerts for configurable exposure noise/saturation
+   thresholds, usage latency, and HTTP errors. Reasons are
+   `exposure_quality_threshold`, `high_latency`, or `http_error`. Alert
+   documents use `event_id` as their stable key.
+
+Thresholds are read from `ALERT_LATENCY_MS` (default 3000 ms),
+`ALERT_NOISE_SIGMA` (default 0.75), and `ALERT_SATURATED_FRACTION` (default
+0.25). Docker Compose passes these settings into Spark; set them in the private
+`.env` if you want to tune the demo. The example values are in `.env.example`.
 
 Window summaries are upserted to `cosmic_eye.live_metrics`; alerts are upserted
 to `cosmic_eye.live_alerts`. The dashboard refreshes every five seconds and
-shows the latest windows and alerts. The Spark Kafka connector version is
+shows KPI cards and charts for events by band, request latency, HTTP error rate,
+alert reasons, alert volume by minute, and busiest regions. Sidebar controls
+select a 5, 15, 30, or 60-minute range (or all available records) and pause or
+resume auto-refresh. Mongo timestamps are displayed in Asia/Kolkata. The
+Spark Kafka connector version is
 matched to PySpark 4.3.0 and Scala 2.13 as specified by Apache Spark's 4.3.0
 Kafka guide. Spark runs inside a Linux Docker container; this avoids the
 Windows Hadoop `winutils.exe` requirement encountered when launching the
@@ -50,12 +61,14 @@ For the one-command demo, open PowerShell at the repository root and run:
 powershell -ExecutionPolicy Bypass -File scripts\demo_streaming.ps1
 ```
 
-The script checks Redpanda health, creates the live topic, starts the
-three Spark queries, starts the
-Streamlit dashboard, publishes 40 synthetic events with injected anomalies,
-and opens `http://localhost:8501`. The first Spark run may take longer while it
-downloads the official Kafka connector. To stop all demo processes and
-Redpanda:
+The script checks Redpanda health, creates the live topic, starts the three
+Spark queries, starts the Streamlit dashboard, and launches a synthetic
+producer for up to two minutes at 50 events/second across 12 sky regions and
+four bands. The producer varies quality values, latency bursts, and HTTP error
+statuses; the dashboard should show multiple regions, bands, and alert reasons.
+It opens `http://localhost:8501` while the producer is running. The first Spark
+run may take longer while it downloads the official Kafka connector. To stop
+all demo processes and Redpanda:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\stop_streaming_demo.ps1
@@ -86,14 +99,16 @@ For troubleshooting, the equivalent manual steps are:
    docker compose --env-file .env -f infra/compose.yaml --profile streaming logs -f spark-streaming
    ```
 
-3. In a third window, send a finite, reproducible demo burst with injected
-   exposure anomalies:
+3. In a third window, send a two-minute, reproducible stream with varied
+   regions, bands, quality values, latency bursts, and HTTP errors:
 
    ```powershell
-   pipeline\.venv\Scripts\python.exe pipeline\live_producer.py --count 40 --rate 2 --inject-anomaly-every 3
+   pipeline\.venv\Scripts\python.exe pipeline\live_producer.py --rate 50 --duration 120 --regions 12 --seed 42
    ```
 
-   Expected: `Live generator stopped: published=40; injected anomalies=...`.
+   Expected: about 6,000 events after two minutes. Press Ctrl+C to stop early.
+   Distinct event IDs are generated for each run; seed 42 repeats the event
+   values/distribution while event timestamps reflect the current run.
 
 4. In another window, launch the dashboard:
 
@@ -143,3 +158,21 @@ read-only, avoiding a second download of its 422 MB jar set into the image.
   exposure-quality alerts, and 10 usage-latency/error alerts.
 - The restricted Atlas IP list worked after removal of the temporary wildcard.
   Do not restore `0.0.0.0/0`.
+
+## Updated chart and varied-data verification
+
+- `python -m py_compile dashboard/app.py pipeline/live_producer.py
+  pipeline/streaming.py` completed with exit code 0.
+- Streamlit AppTest against the Atlas data returned 0 exceptions, 5 KPI cards,
+  6 chart specs, and 3 detail tables. The detail tables had no all-null columns.
+- The producer ran with `--rate 50 --duration 120 --regions 12 --seed 42` and
+  reported 6,000 published synthetic events, 264 varied exposure anomalies,
+  and 582 high-latency burst events.
+- Read-only Atlas check for recent results found 192 event-window documents
+  across 12 regions and all four bands (`SPHEREx-D1` through `SPHEREx-D4`);
+  the largest region/band one-minute count was 82, and every observed window
+  row had a count greater than one.
+- The same check found 1,846 recent alerts across 12 regions with all three
+  reasons: `exposure_quality_threshold`, `high_latency`, and `http_error`.
+- Atlas reported 913,408 bytes for the live database's collection storage plus
+  indexes after these demo runs (under 1 MiB combined).

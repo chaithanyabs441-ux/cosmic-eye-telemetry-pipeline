@@ -6,6 +6,7 @@ $pidFile = Join-Path $tempRoot "processes.json"
 if (Test-Path -LiteralPath $pidFile) {
     $processIds = Get-Content -LiteralPath $pidFile -Raw | ConvertFrom-Json
     if ($processIds.dashboard) { Stop-Process -Id ([int]$processIds.dashboard) -Force -ErrorAction SilentlyContinue }
+    if ($processIds.producer) { Stop-Process -Id ([int]$processIds.producer) -Force -ErrorAction SilentlyContinue }
     Remove-Item -LiteralPath $pidFile -Force
 }
 

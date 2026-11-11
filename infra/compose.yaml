@@ -38,6 +38,9 @@ services:
       KAFKA_LIVE_TOPIC: ${KAFKA_LIVE_TOPIC:-cosmic-eye-live}
       MONGODB_URI: ${MONGODB_URI:?Set MONGODB_URI in the repository .env file}
       MONGODB_DATABASE: ${MONGODB_DATABASE:-cosmic_eye}
+      ALERT_LATENCY_MS: ${ALERT_LATENCY_MS:-3000}
+      ALERT_NOISE_SIGMA: ${ALERT_NOISE_SIGMA:-0.75}
+      ALERT_SATURATED_FRACTION: ${ALERT_SATURATED_FRACTION:-0.25}
       PYSPARK_PYTHON: python
       PYSPARK_DRIVER_PYTHON: python
       SPARK_HOME: /opt/python/pyspark

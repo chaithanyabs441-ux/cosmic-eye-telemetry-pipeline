@@ -76,19 +76,23 @@ and show the captured, credential-free sample in `docs/QUERY_APPENDIX.md`.
 powershell -ExecutionPolicy Bypass -File scripts\demo_streaming.ps1
 ```
 
-The script starts Redpanda/Spark/Streamlit and publishes 40 synthetic events
-with injected anomalies. Open `http://localhost:8501`. Show the live metrics,
-the alert reasons, and then use the page selector to open **1_Warehouse
-Insights**. Explain one business takeaway from a chart. The five-second
-dashboard refresh and streaming windows are demonstrations, not a production
-latency promise.
+The script starts Redpanda/Spark/Streamlit and launches a two-minute synthetic
+stream at 50 events/second across 12 regions and four bands. It varies quality
+values, latency bursts, and HTTP error statuses so the charts show more than one
+region, band, and alert reason. Open `http://localhost:8501` while the producer
+is running. Explain events by band, weighted latency, error rate, alert reasons,
+alerts per minute, and the busiest regions. The five-second dashboard refresh
+and streaming windows are demonstrations, not a production latency promise.
 
 If everything is already started and running, avoid starting a second stream
-job. Open `http://localhost:8501` and run a small finite event burst instead:
+job. Open `http://localhost:8501` and run the producer for up to two minutes:
 
 ```powershell
-pipeline\.venv\Scripts\python.exe pipeline\live_producer.py --count 40 --rate 2 --inject-anomaly-every 3
+pipeline\.venv\Scripts\python.exe pipeline\live_producer.py --rate 50 --duration 120 --regions 12 --seed 42
 ```
+
+Press Ctrl+C in the producer window to stop early. The dashboard keeps showing
+the last saved summaries; values change again when new events arrive.
 
 ### 6. Show query optimization and results (1 minute)
 

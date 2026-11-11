@@ -50,8 +50,11 @@ Business question: Which individual exposure or app events crossed a quality,
 latency, or server-error threshold?
 
 The implemented filter in `pipeline/streaming.py` creates an alert for an
-exposure with noise sigma >= 0.75 or saturated-pixel fraction >= 0.25, and for
-usage with latency >= 2,000 ms or HTTP status >= 500. Alerts are keyed by
-`event_id` and upserted to `cosmic_eye.live_alerts`.
+exposure with noise sigma >= `ALERT_NOISE_SIGMA` (default 0.75) or
+saturated-pixel fraction >= `ALERT_SATURATED_FRACTION` (default 0.25). Usage
+events with HTTP status >= 400 use reason `http_error`; otherwise events with
+latency >= `ALERT_LATENCY_MS` (default 3000 ms) use reason `high_latency`.
+Threshold values can be set in the local `.env`; Compose passes them to Spark.
+Alerts are keyed by `event_id` and upserted to `cosmic_eye.live_alerts`.
 
 The captured output and observed runtime are in the query appendix.

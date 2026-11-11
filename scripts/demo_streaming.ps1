@@ -7,6 +7,8 @@ $pythonExe = Join-Path $projectRoot "pipeline\.venv\Scripts\python.exe"
 $tempRoot = Join-Path $env:TEMP "cosmic-eye-phase6"
 $dashboardLog = Join-Path $tempRoot "dashboard.log"
 $dashboardError = Join-Path $tempRoot "dashboard-error.log"
+$producerLog = Join-Path $tempRoot "producer.log"
+$producerError = Join-Path $tempRoot "producer-error.log"
 $pidFile = Join-Path $tempRoot "processes.json"
 
 if (-not (Test-Path -LiteralPath $pythonExe)) {
@@ -77,14 +79,17 @@ if (-not $dashboardReady) {
     throw "Streamlit did not start. $details"
 }
 
-@{ dashboard = $dashboardProcess.Id } |
+Start-Process "http://localhost:8501"
+Write-Host "Starting 2-minute synthetic stream: 50 events/second across 12 regions..."
+$producerProcess = Start-Process -FilePath $pythonExe `
+    -ArgumentList @("pipeline\live_producer.py", "--rate", "50", "--duration", "120", "--regions", "12", "--seed", "42") `
+    -WorkingDirectory $projectRoot -PassThru -WindowStyle Hidden `
+    -RedirectStandardOutput $producerLog -RedirectStandardError $producerError
+@{ dashboard = $dashboardProcess.Id; producer = $producerProcess.Id } |
     ConvertTo-Json | Set-Content -LiteralPath $pidFile -Encoding UTF8
 
-Write-Host "Publishing 40 synthetic events with injected anomalies..."
-& $pythonExe pipeline\live_producer.py --count 40 --rate 2 --inject-anomaly-every 3
-if ($LASTEXITCODE -ne 0) { throw "Live producer failed with exit code $LASTEXITCODE." }
-
-Start-Process "http://localhost:8501"
 Write-Host "Demo is live at http://localhost:8501"
+Write-Host "The synthetic producer runs for up to 120 seconds and then stops; use the stop script to end the demo early."
+Write-Host "Producer output: $producerLog"
 Write-Host "Spark log: docker compose --env-file .env -f infra\compose.yaml --profile streaming logs -f spark-streaming"
 Write-Host "To stop Spark/dashboard, run: powershell -ExecutionPolicy Bypass -File scripts\stop_streaming_demo.ps1"

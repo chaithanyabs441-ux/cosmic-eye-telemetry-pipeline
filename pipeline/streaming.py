@@ -16,6 +16,9 @@ load_dotenv(ROOT / ".env")
 
 SPARK_VERSION = "4.3.0"
 KAFKA_CONNECTOR = f"org.apache.spark:spark-sql-kafka-0-10_2.13:{SPARK_VERSION}"
+ALERT_LATENCY_MS = int(os.getenv("ALERT_LATENCY_MS", "3000"))
+ALERT_NOISE_SIGMA = float(os.getenv("ALERT_NOISE_SIGMA", "0.75"))
+ALERT_SATURATED_FRACTION = float(os.getenv("ALERT_SATURATED_FRACTION", "0.25"))
 
 
 def required_env(name: str) -> str:
@@ -215,13 +218,21 @@ def main() -> int:
             "alert_reason",
             when(
                 (col("event_type") == "exposure")
-                & ((col("noise_sigma") >= 0.75) | (col("saturated_pixel_fraction") >= 0.25)),
+                & (
+                    (col("noise_sigma") >= ALERT_NOISE_SIGMA)
+                    | (col("saturated_pixel_fraction") >= ALERT_SATURATED_FRACTION)
+                ),
                 expr("'exposure_quality_threshold'"),
             )
             .when(
                 (col("event_type") == "usage")
-                & ((col("latency_ms") >= 2000) | (col("http_status") >= 500)),
-                expr("'usage_latency_or_http_error'"),
+                & (col("http_status") >= 400),
+                expr("'http_error'"),
+            )
+            .when(
+                (col("event_type") == "usage")
+                & (col("latency_ms") >= ALERT_LATENCY_MS),
+                expr("'high_latency'"),
             ),
         )
         .filter(col("alert_reason").isNotNull())
@@ -258,7 +269,11 @@ def main() -> int:
         .start(),
     ]
 
-    print(f"Spark Structured Streaming started: topic={topic}; three queries active; watermarks=2 minutes")
+    print(
+        f"Spark Structured Streaming started: topic={topic}; three queries active; "
+        f"watermarks=2 minutes; alerts latency_ms>={ALERT_LATENCY_MS}, "
+        f"noise_sigma>={ALERT_NOISE_SIGMA:g}, saturation>={ALERT_SATURATED_FRACTION:g}"
+    )
     print("Press Ctrl+C to stop the streaming queries.")
     try:
         spark.streams.awaitAnyTermination()
