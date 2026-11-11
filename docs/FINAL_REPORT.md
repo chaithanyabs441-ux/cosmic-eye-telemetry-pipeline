@@ -6,6 +6,8 @@
 **Report evidence captured:** 2026-11-11
 **Project status:** implementation and scale evidence are available; final scheduled-run proof, team names, and final demo screenshots must be filled in before submission.
 
+**Final audit:** Phase 10 setup dry-run and teardown-script dry-runs passed. The frontend typecheck passed. The backend Ruff check found 87 lint findings, and pytest discovered no tests; see `docs/REQUIREMENTS_CHECKLIST.md`. Teardown has not been run. Follow `docs/TEARDOWN_CHECKLIST.md` only after the final demo/viva.
+
 ## 1. Problem statement
 
 Cosmic Eye is an astronomy application that presents public SPHEREx archive

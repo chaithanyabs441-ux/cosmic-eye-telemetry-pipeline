@@ -1,6 +1,6 @@
 # Course Requirements Checklist
 
-**Overall status:** PARTIAL - Phase 9 documentation is complete, but student names/screenshots remain, two successful automatic schedule runs still need explicit evidence, and free-tier usage/teardown requirements continue through the viva. GitHub-hosted ETL runs BigQuery only; Atlas sync is verified locally.
+**Overall status:** PARTIAL - Final audit and teardown instructions are complete. Student names/screenshots, two successful automatic schedule runs, backend lint/test health, and post-viva cleanup remain outstanding. GitHub-hosted ETL runs BigQuery only; Atlas sync is verified locally.
 
 | Requirement ID | What will satisfy it | File / query / evidence | Status |
 |---|---|---|---|
@@ -136,3 +136,16 @@
 | Presentation and demo | `docs/PRESENTATION_OUTLINE.md`, `docs/DEMO_SCRIPT.md`, optional `docs/DEMO_VIDEO_STORYBOARD.md` | PASS for documents; rehearsal remains |
 | Proposal and status audit | `docs/PROPOSAL.md` updated with deployed project/repository and current architecture; workflow, phase docs, handoff notes, and checklist reviewed | PASS |
 | Automatic schedule evidence | User reports a passing run after the workflow fix; private Actions history could not be inspected here (`gh` CLI unavailable). Two successful `schedule` event runs are still required | Partial |
+
+## Phase 10 evidence
+
+| Phase 10 item | Evidence | Status |
+|---|---|---|
+| Fresh-clone setup dry run | `git clone --no-hardlinks . %TEMP%\cosmic-eye-phase10-fresh-clone` succeeded; README, setup guide, and workflow present; `.env` and `actions-runner/` absent; clone `git status --short` empty | PASS for clean-clone contents; cloud setup was not repeated |
+| Required final check script | `bash scripts/check.sh` could not start because the Windows checkout has no WSL `/bin/bash`; Git Bash execution reached Ruff but stopped because `backend/.venv/bin/activate` is Linux-specific | Partial; Windows equivalents were checked below |
+| Backend Ruff check | `backend\.venv\Scripts\ruff.exe check app tests` → `Found 87 errors` in existing application files | FAIL; findings predate Phase 10 and were not changed in this pipeline phase |
+| Backend pytest check | `backend\.venv\Scripts\pytest.exe -q` → `no tests ran in 0.02s` (exit 1); pytest also prints an asyncio fixture-scope deprecation warning | FAIL; this checkout currently has no discoverable backend tests |
+| Frontend typecheck | `npm run typecheck` in `frontend` → `tsc --noEmit && tsc --noEmit -p tsconfig.node.json`, exit 0 | PASS |
+| Teardown procedure | `scripts/teardown.sh`, `scripts/teardown.ps1`, and `docs/TEARDOWN_CHECKLIST.md`; both scripts default to plan-only dry runs, require an after-viva flag and exact typed confirmation for local volume/BigQuery dataset deletion | PASS; scripts syntax-checked and dry-run verified |
+| Teardown execution | No containers, BigQuery datasets/project, Atlas resources, credentials, or GitHub repository were deleted | Correctly deferred until the owner confirms the final demo/viva is finished |
+| Final course gate | Team names, demo screenshots/rehearsal, two successful scheduled-run records, and cleanup remain owner actions; two schedule-triggered successes are not captured here | Partial |
