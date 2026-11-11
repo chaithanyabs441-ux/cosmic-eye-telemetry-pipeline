@@ -632,7 +632,7 @@ Reproduce with `pipeline\.venv\Scripts\python.exe queries\nosql\run_optimization
 
 Implementations and query definitions: [streaming query map](../queries/streaming/README.md) and [`pipeline/streaming.py`](../pipeline/streaming.py). The Spark job uses a five-second processing trigger and a two-minute event-time watermark. Continuous streams do not finish like SQL jobs, so no single query runtime exists. In the captured Docker logs, a micro-batch exceeded the five-second trigger at 5.105 seconds and 6.233 seconds while the local machine was processing. These are observed batch processing times, not a service-level latency guarantee.
 
-Read-only Atlas snapshot from `pipeline\verify_streaming.py` on 2026-11-11:
+Historical read-only Atlas snapshot from `pipeline\verify_streaming.py` on 2026-11-11 (before the incident-scenario update):
 
 | Continuous query | Stored output at capture | Sample captured output |
 |---|---:|---|
@@ -691,6 +691,10 @@ usage.filter(col("event_type") == "usage").groupBy(
 
 **Business question:** Which individual exposure or app-use events cross the configured quality or response thresholds?
 
+The Spark job reads `ALERT_LATENCY_MS` (default 5000 ms),
+`ALERT_NOISE_SIGMA` (default 1.1), and `ALERT_SATURATED_FRACTION` (default
+0.6) from the environment.
+
 **Query text:**
 
 ```python
@@ -701,12 +705,19 @@ alerts = (
         "alert_reason",
         when(
             (col("event_type") == "exposure")
-            & ((col("noise_sigma") >= 0.75) | (col("saturated_pixel_fraction") >= 0.25)),
+            & (
+                (col("noise_sigma") >= ALERT_NOISE_SIGMA)
+                | (col("saturated_pixel_fraction") >= ALERT_SATURATED_FRACTION)
+            ),
             expr("'exposure_quality_threshold'"),
         ).when(
             (col("event_type") == "usage")
-            & ((col("latency_ms") >= 2000) | (col("http_status") >= 500)),
-            expr("'usage_latency_or_http_error'"),
+            & (col("http_status") >= 400),
+            expr("'http_error'"),
+        ).when(
+            (col("event_type") == "usage")
+            & (col("latency_ms") >= ALERT_LATENCY_MS),
+            expr("'high_latency'"),
         ),
     )
     .filter(col("alert_reason").isNotNull())
@@ -718,7 +729,9 @@ Matching rows are upserted by `event_id` to `live_alerts`.
 **Captured sample output:**
 
 ```json
-{"event_type":"exposure","region_key":"sky_23_00","band_id":"SPHEREx-D3","noise_sigma":0.79,"saturated_pixel_fraction":0.35,"alert_reason":"exposure_quality_threshold"}
+{"event_type":"exposure","region_key":"sky_26_17","band_id":"SPHEREx-D1","noise_sigma":1.143,"saturated_pixel_fraction":0.536,"alert_reason":"exposure_quality_threshold"}
+{"event_type":"usage","region_key":"sky_23_00","band_id":"SPHEREx-D1","event_name":"browse","latency_ms":6714,"http_status":200,"alert_reason":"high_latency"}
+{"event_type":"usage","region_key":"sky_23_00","band_id":"SPHEREx-D2","event_name":"search","latency_ms":1521,"http_status":404,"alert_reason":"http_error"}
 ```
 
 **Execution time:** continuous; five-second trigger. The same Spark process-level batch observations are reported above; per-query duration was not emitted by the current Spark log configuration.

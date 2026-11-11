@@ -34,13 +34,7 @@ Write-Host "Creating the live topic before Spark subscribes..."
 if ($LASTEXITCODE -ne 0) { throw "Could not create the live topic. Check Redpanda and KAFKA_BOOTSTRAP_SERVERS." }
 
 Write-Host "Starting the Linux Spark worker..."
-$sparkImage = (& docker image inspect infra-spark-streaming:latest --format '{{.Id}}' 2>$null | Out-String).Trim()
-if ($LASTEXITCODE -eq 0 -and $sparkImage) {
-    & docker compose --env-file $composeEnvFile -f $composeFile --profile streaming up -d spark-streaming
-} else {
-    Write-Host "Spark worker image is not built yet; building it now..."
-    & docker compose --env-file $composeEnvFile -f $composeFile --profile streaming up -d --build spark-streaming
-}
+& docker compose --env-file $composeEnvFile -f $composeFile --profile streaming up -d --build spark-streaming
 if ($LASTEXITCODE -ne 0) { throw "Could not start the Spark worker. Check Docker Desktop and the image build output." }
 
 Write-Host "Waiting for the Linux Spark worker and its Kafka connector..."
@@ -80,16 +74,16 @@ if (-not $dashboardReady) {
 }
 
 Start-Process "http://localhost:8501"
-Write-Host "Starting 2-minute synthetic stream: 50 events/second across 12 regions..."
+Write-Host "Starting 5-minute synthetic incident demo: 50 base events/second across 12 regions..."
 $producerProcess = Start-Process -FilePath $pythonExe `
-    -ArgumentList @("pipeline\live_producer.py", "--rate", "50", "--duration", "120", "--regions", "12", "--seed", "42") `
+    -ArgumentList @("pipeline\live_producer.py", "--rate", "50", "--duration", "300", "--regions", "12", "--scenario", "incident", "--incident-region", "sky_23_00", "--seed", "42") `
     -WorkingDirectory $projectRoot -PassThru -WindowStyle Hidden `
     -RedirectStandardOutput $producerLog -RedirectStandardError $producerError
 @{ dashboard = $dashboardProcess.Id; producer = $producerProcess.Id } |
     ConvertTo-Json | Set-Content -LiteralPath $pidFile -Encoding UTF8
 
 Write-Host "Demo is live at http://localhost:8501"
-Write-Host "The synthetic producer runs for up to 120 seconds and then stops; use the stop script to end the demo early."
+Write-Host "The incident starts at minute 2 and ends at minute 4. The producer stops at minute 5; use the stop script to end early."
 Write-Host "Producer output: $producerLog"
 Write-Host "Spark log: docker compose --env-file .env -f infra\compose.yaml --profile streaming logs -f spark-streaming"
 Write-Host "To stop Spark/dashboard, run: powershell -ExecutionPolicy Bypass -File scripts\stop_streaming_demo.ps1"

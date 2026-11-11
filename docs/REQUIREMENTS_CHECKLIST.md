@@ -20,7 +20,7 @@
 | R4.4-b | Run ETL automatically or on a schedule | `.github/workflows/warehouse-etl.yml` schedules BigQuery dbt hourly on GitHub-hosted `ubuntu-latest`; user reports a passing run after fix, but two successful `schedule` event runs are not independently captured in repo evidence | Partial |
 | R4.5 | Clean, deduplicate, validate schema, handle missing/noisy values, convert formats, and engineer fields | `pipeline/dbt/models/`; `pipeline/verify_etl.py`; scale run: 17,268 duplicate excess removed, 14,338 ingestion rejects, 17,052 preprocessing rejects, 511,456 exposure and 460,310 usage facts; 15 dbt tests pass | PASS at scale; streaming late-event watermark is Phase 6 |
 | R4.6-a | Implement a streaming layer | Docker logs: Spark Structured Streaming started on `cosmic-eye-live`; three queries active; Redpanda healthy | PASS |
-| R4.6-b | Demonstrate windows and alerts/filters | Fresh 6,000-event run: 192 recent event-window docs across 12 regions/all four bands, max region-band count 82; 1,846 recent alerts across 12 regions with all three reasons; Spark log confirms three active queries and configurable alert thresholds | PASS |
+| R4.6-b | Demonstrate windows and alerts/filters | Phase 6 incident verification: 18,335 synthetic events in 5 min; `sky_23_00` had 2,487 events in the full incident minute vs 855 in baseline (2.91×); actual alert rate rose from 1.17% baseline to 15.96% incident; all three alert reasons observed; Spark log confirms thresholds 5000 ms / 1.1 / 0.6 | PASS |
 | R4.6-c | Show streaming results on a live dashboard/output | `dashboard/app.py` renders five KPIs and six chart specs; AppTest returned 0 exceptions and three detail tables with no all-null columns; charts cover event bands, weighted latency/p95, error rate, alert reason/time, and busiest regions | PASS |
 | R4.7-a | At least 8 analytical warehouse SQL queries covering required patterns | `queries/warehouse/q01`–`q08`; all eight ran live in BigQuery with real sample rows, bytes, and client elapsed time in `docs/QUERY_APPENDIX.md` | PASS |
 | R4.7-b | At least 5 NoSQL queries, including indexed query | `queries/nosql/run_queries.py`; six Atlas queries ran; n06 `explain` used `region_band_day_lookup` and examined 1 doc/key | PASS |
@@ -100,7 +100,7 @@
 | Spark Structured Streaming from Redpanda | Docker logs report 3 active queries; 40-event bursts consumed; `pipeline/verify_streaming.py` confirms Atlas writes | PASS |
 | Tumbling/sliding windows and watermark | Atlas contains 42 event-count and 180 usage-window summaries; Spark log confirms 2-minute watermark | PASS |
 | Event-triggered alert and live dashboard | Atlas contains 12 exposure and 10 usage alerts; Streamlit health endpoint returned HTTP 200 | PASS |
-| One-command demo and shutdown | `scripts/demo_streaming.ps1` published 40 synthetic events and opened the dashboard; stop script is available | PASS |
+| One-command demo and shutdown | `scripts/demo_streaming.ps1` now launches the 5-minute `incident` scenario and opens the charted dashboard; PowerShell parse passed; end-to-end stream scenario was verified directly; stop script now also ends the producer | Implemented; one-command script should be used for the viva run |
 
 ## Phase 7 evidence
 

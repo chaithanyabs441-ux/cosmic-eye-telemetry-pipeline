@@ -15,9 +15,10 @@ flowchart LR
     ALERTS --> DASH
 ```
 
-The producer creates synthetic events and synthetic quality metrics. It can
-inject a high-noise/high-saturation exposure so the alert query can be shown
-working on demand. The producer publishes only to a bounded Redpanda topic;
+The producer creates synthetic events and synthetic quality metrics. Its
+`normal` scenario is the default. The `incident` scenario boosts one region
+between run minutes 2 and 4, while keeping the base event cadence steady. The
+producer publishes only to a bounded Redpanda topic;
 Spark checkpoint files contain processing offsets/state metadata, not event
 history. The curated/raw BigQuery tables remain the primary data store.
 
@@ -32,10 +33,12 @@ Spark runs three concurrent Structured Streaming queries:
    `exposure_quality_threshold`, `high_latency`, or `http_error`. Alert
    documents use `event_id` as their stable key.
 
-Thresholds are read from `ALERT_LATENCY_MS` (default 3000 ms),
-`ALERT_NOISE_SIGMA` (default 0.75), and `ALERT_SATURATED_FRACTION` (default
-0.25). Docker Compose passes these settings into Spark; set them in the private
-`.env` if you want to tune the demo. The example values are in `.env.example`.
+Thresholds are read from `ALERT_LATENCY_MS` (default 5000 ms),
+`ALERT_NOISE_SIGMA` (default 1.1), and `ALERT_SATURATED_FRACTION` (default
+0.6). These defaults keep normal traffic alerts uncommon while the incident
+region produces an obvious latency/error spike. Docker Compose passes these
+settings into Spark; set them in the private `.env` if you want to tune the
+demo. The example values are in `.env.example`.
 
 Window summaries are upserted to `cosmic_eye.live_metrics`; alerts are upserted
 to `cosmic_eye.live_alerts`. The dashboard refreshes every five seconds and
@@ -62,13 +65,19 @@ powershell -ExecutionPolicy Bypass -File scripts\demo_streaming.ps1
 ```
 
 The script checks Redpanda health, creates the live topic, starts the three
-Spark queries, starts the Streamlit dashboard, and launches a synthetic
-producer for up to two minutes at 50 events/second across 12 sky regions and
-four bands. The producer varies quality values, latency bursts, and HTTP error
-statuses; the dashboard should show multiple regions, bands, and alert reasons.
-It opens `http://localhost:8501` while the producer is running. The first Spark
-run may take longer while it downloads the official Kafka connector. To stop
-all demo processes and Redpanda:
+Spark queries, starts the Streamlit dashboard, and launches this producer
+command in the background:
+
+```powershell
+pipeline\.venv\Scripts\python.exe pipeline\live_producer.py --rate 50 --duration 300 --regions 12 --scenario incident --incident-region sky_23_00 --seed 42
+```
+
+The first two minutes establish baseline; `sky_23_00` has 3× event volume,
+3–4× usage latency, and about 25% HTTP errors during minutes 2–4; minute 4–5
+shows recovery. The producer uses uneven band/region weights, unique event IDs,
+and small timing jitter. The dashboard opens while the synthetic feed runs. The
+first Spark run may take longer while it downloads the official Kafka
+connector. To stop all demo processes and Redpanda:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\stop_streaming_demo.ps1
@@ -99,16 +108,16 @@ For troubleshooting, the equivalent manual steps are:
    docker compose --env-file .env -f infra/compose.yaml --profile streaming logs -f spark-streaming
    ```
 
-3. In a third window, send a two-minute, reproducible stream with varied
-   regions, bands, quality values, latency bursts, and HTTP errors:
+3. In a third window, send the five-minute incident scenario:
 
    ```powershell
-   pipeline\.venv\Scripts\python.exe pipeline\live_producer.py --rate 50 --duration 120 --regions 12 --seed 42
+   pipeline\.venv\Scripts\python.exe pipeline\live_producer.py --rate 50 --duration 300 --regions 12 --scenario incident --incident-region sky_23_00 --seed 42
    ```
 
-   Expected: about 6,000 events after two minutes. Press Ctrl+C to stop early.
-   Distinct event IDs are generated for each run; seed 42 repeats the event
-   values/distribution while event timestamps reflect the current run.
+   Expected: about 18,000 events after five minutes. The first two minutes are
+   baseline, minutes 2–4 are the incident, and minute 4–5 is recovery. Press
+   Ctrl+C to stop early. Seed 42 repeats event values/distribution, while event
+   timestamps and unique IDs identify this run.
 
 4. In another window, launch the dashboard:
 
@@ -159,7 +168,7 @@ read-only, avoiding a second download of its 422 MB jar set into the image.
 - The restricted Atlas IP list worked after removal of the temporary wildcard.
   Do not restore `0.0.0.0/0`.
 
-## Updated chart and varied-data verification
+## Earlier varied-stream verification (before scenario controls)
 
 - `python -m py_compile dashboard/app.py pipeline/live_producer.py
   pipeline/streaming.py` completed with exit code 0.
@@ -176,3 +185,28 @@ read-only, avoiding a second download of its 422 MB jar set into the image.
   reasons: `exposure_quality_threshold`, `high_latency`, and `http_error`.
 - Atlas reported 913,408 bytes for the live database's collection storage plus
   indexes after these demo runs (under 1 MiB combined).
+
+## Incident scenario verification
+
+- Seeded sampler check (100,000 normal events): 1,619 crossed the configured
+  alert thresholds (1.62%). In 20,000 incident usage samples, 24.51% returned
+  HTTP errors and 43.19% exceeded the 5,000 ms latency alert threshold. Event
+  object keys remained unchanged.
+- Updated Spark container log: three queries active with thresholds
+  `latency_ms>=5000`, `noise_sigma>=1.1`, and `saturation>=0.6`.
+- End-to-end command `pipeline\.venv\Scripts\python.exe
+  pipeline\live_producer.py --rate 50 --duration 300 --regions 12 --scenario
+  incident --incident-region sky_23_00 --seed 42` published 18,335 events over
+  five minutes. Of these, 5,037 events were sent to the incident region during
+  the two-minute incident interval (three times the sampled base events there).
+- Atlas event-window summaries for the run were 39.6% D1, 30.7% D2, 20.1% D3,
+  and 9.6% D4. At the complete incident minute 15:56 UTC, `sky_23_00` had 2,487
+  events versus 855 in the complete baseline minute 15:54 UTC (2.91×); total
+  events in those minutes were 4,655 and 2,995 respectively.
+- Alerts in the run-time query range: 784 `http_error`, 807 `high_latency`,
+  and 43 `exposure_quality_threshold`. All three reasons appeared in the
+  incident region, where the two-minute rate increase was visible.
+- In the full baseline minute at 15:54 UTC, 35/2,995 events alerted (1.17%).
+  In the full incident minute at 15:56 UTC, 743/4,655 events alerted (15.96%).
+  Atlas collection storage was 643,072 bytes and index storage was 667,648
+  bytes at the end of this test.

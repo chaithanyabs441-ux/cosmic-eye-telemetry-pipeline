@@ -113,6 +113,12 @@ The Spark job uses a two-minute event-time watermark and a five-second trigger.
 Local logs observed some batches taking 5.105 and 6.233 seconds, longer than the
 trigger interval. These are actual local observations, not a latency guarantee.
 
+The live demo has `normal` and `incident` synthetic scenarios. In a measured
+five-minute run, the normal baseline minute alerted on 1.17% of events. During
+the incident, `sky_23_00` reached 2.91 times its baseline event count and the
+overall alert rate reached 15.96%. This is generated test telemetry, not a
+report of real SPHEREx conditions.
+
 GitHub-hosted Actions uses changing IPs. To avoid opening Atlas to the whole
 internet for the scheduled job, the workflow runs BigQuery dbt only. The local
 `pipeline/sync_mongodb.py` performs the BigQuery-to-Atlas transfer when the

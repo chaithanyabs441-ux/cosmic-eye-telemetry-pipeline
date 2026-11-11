@@ -16,9 +16,9 @@ load_dotenv(ROOT / ".env")
 
 SPARK_VERSION = "4.3.0"
 KAFKA_CONNECTOR = f"org.apache.spark:spark-sql-kafka-0-10_2.13:{SPARK_VERSION}"
-ALERT_LATENCY_MS = int(os.getenv("ALERT_LATENCY_MS", "3000"))
-ALERT_NOISE_SIGMA = float(os.getenv("ALERT_NOISE_SIGMA", "0.75"))
-ALERT_SATURATED_FRACTION = float(os.getenv("ALERT_SATURATED_FRACTION", "0.25"))
+ALERT_LATENCY_MS = int(os.getenv("ALERT_LATENCY_MS", "5000"))
+ALERT_NOISE_SIGMA = float(os.getenv("ALERT_NOISE_SIGMA", "1.1"))
+ALERT_SATURATED_FRACTION = float(os.getenv("ALERT_SATURATED_FRACTION", "0.6"))
 
 
 def required_env(name: str) -> str:

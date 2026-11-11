@@ -70,29 +70,47 @@ The indexed `explain` output should show the index scan and one document
 examined for the current captured dataset. If Atlas times out, skip this step
 and show the captured, credential-free sample in `docs/QUERY_APPENDIX.md`.
 
-### 5. Start the live streaming dashboard (3–4 minutes)
+### 5. Start the live streaming dashboard (5–6 minutes)
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\demo_streaming.ps1
 ```
 
-The script starts Redpanda/Spark/Streamlit and launches a two-minute synthetic
-stream at 50 events/second across 12 regions and four bands. It varies quality
-values, latency bursts, and HTTP error statuses so the charts show more than one
-region, band, and alert reason. Open `http://localhost:8501` while the producer
-is running. Explain events by band, weighted latency, error rate, alert reasons,
-alerts per minute, and the busiest regions. The five-second dashboard refresh
-and streaming windows are demonstrations, not a production latency promise.
+The script starts Redpanda/Spark/Streamlit and launches a five-minute synthetic
+incident scenario. The first two minutes are normal baseline traffic; from
+minute 2 to minute 4, `sky_23_00` gets three times its normal event volume,
+3–4× usage latency, and about 25% HTTP errors; the last minute shows recovery.
+Open `http://localhost:8501` while it runs. Keep the dashboard time range at
+15 or 30 minutes and auto-refresh on.
+
+Point to each chart as the scenario runs:
+
+1. **Events per minute by band:** bands are deliberately uneven (D1 40%, D2
+   30%, D3 20%, D4 10%). The incident adds extra events for one region, so the
+   total counts rise during minutes 2–4.
+2. **Average and p95 latency:** the average is weighted by request count; the
+   p95 line is the highest regional p95. Both should climb for windows
+   containing the incident.
+3. **HTTP error rate:** point out the error-rate spike during the incident.
+4. **Alerts by reason:** `http_error` and `high_latency` should increase in the
+   incident window; normal traffic has only occasional alerts.
+5. **Alerts over time:** show the per-minute alert spike during minutes 2–4.
+6. **Busiest sky regions:** `sky_23_00` should rise to the top during the
+   incident, then stop receiving the extra events during minute 4–5.
+
+The five-second dashboard refresh and streaming windows are demonstrations,
+not a production latency promise.
 
 If everything is already started and running, avoid starting a second stream
-job. Open `http://localhost:8501` and run the producer for up to two minutes:
+job. Open `http://localhost:8501` and run the exact incident command:
 
 ```powershell
-pipeline\.venv\Scripts\python.exe pipeline\live_producer.py --rate 50 --duration 120 --regions 12 --seed 42
+pipeline\.venv\Scripts\python.exe pipeline\live_producer.py --rate 50 --duration 300 --regions 12 --scenario incident --incident-region sky_23_00 --seed 42
 ```
 
-Press Ctrl+C in the producer window to stop early. The dashboard keeps showing
-the last saved summaries; values change again when new events arrive.
+To keep generating until you stop it yourself, use `--duration 0` instead of
+`--duration 300`; press Ctrl+C in the producer window when finished. The
+dashboard keeps showing saved results after the producer stops.
 
 ### 6. Show query optimization and results (1 minute)
 
