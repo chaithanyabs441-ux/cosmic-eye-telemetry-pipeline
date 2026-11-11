@@ -1,24 +1,24 @@
 # Course Requirements Checklist
 
-**Phase 4 status:** PARTIAL - dbt ETL and 15 data tests pass in BigQuery; GitHub Actions now schedules the BigQuery ETL on a hosted runner only. Capture two successful scheduled runs. The MongoDB sync is verified locally; Atlas access from GitHub-hosted runners is excluded to preserve the narrow IP allow-list. The project-wide storage view still returns no rows.
+**Overall status:** PARTIAL - Phase 9 documentation is complete, but student names/screenshots remain, two successful automatic schedule runs still need explicit evidence, and free-tier usage/teardown requirements continue through the viva. GitHub-hosted ETL runs BigQuery only; Atlas sync is verified locally.
 
 | Requirement ID | What will satisfy it | File / query / evidence | Status |
 |---|---|---|---|
-| G-TEAM | Exactly two students; both can explain all stages | `docs/PROPOSAL.md` team fields are placeholders; names still needed | Planned |
+| G-TEAM | Exactly two students; both can explain all stages | `docs/PROPOSAL.md`, `docs/FINAL_REPORT.md`, `docs/PRESENTATION_OUTLINE.md`; names and two-member rehearsal remain student actions | Partial |
 | G-FREE | Free tiers only; monitor usage; tear down resources | Proposal and Phase 1/2 guides; Sandbox, Atlas, and local broker tested; no billing account linked | Partial - monetary GCP budget alert unavailable in billing-disabled Sandbox; teardown remains |
-| G-CITE | Cite datasets, libraries, and external resources | `docs/REFERENCES.md` | Draft |
-| G-PRIVACY | No real personal/sensitive app-usage data | `docs/PROPOSAL.md` synthetic anonymous sessions and provenance design | Planned |
+| G-CITE | Cite datasets, libraries, and external resources | `docs/REFERENCES.md`; report links references and query appendix | PASS |
+| G-PRIVACY | No real personal/sensitive app-usage data | `docs/PROPOSAL.md`; generator uses anonymous synthetic sessions and explicit event provenance | PASS by schema/design |
 | R4.1-a | Use synthetic records and/or replay public data | `pipeline/ingest.py`; bounded IRSA QR2 metadata run and explicitly synthetic usage/quality records | PASS |
 | R4.1-b | Generate in batch and continuous modes | `pipeline/ingest.py`; batch and finite-live runs both passed count checks | PASS |
 | R4.1-c | State volume, velocity, variety | `docs/PROPOSAL.md`, `docs/PHASE2_INGESTION.md`, and Phase 8 scale run: 1,006,082 raw event rows; completed continuation measured 946.84 events/s end-to-end; exposure, usage, reject shapes | PASS for measured course-scale run; higher continuous-live target remains a separate demo limit |
 | R4.2-a | Store raw and curated data only in a cloud warehouse | `raw.events`, `raw.rejected_events`, and all five curated star-schema tables are in BigQuery; Phase 4 dbt fills curated tables | PASS |
-| R4.2-b | Do not store the primary dataset locally | Generator publishes to temporary Redpanda topics; loader uses in-memory batches; no local history files | PASS by implementation; full-scale run pending |
+| R4.2-b | Do not store the primary dataset locally | Generator publishes to temporary Redpanda topics; loader uses in-memory batches; 1,006,082 rows loaded to BigQuery without local event history files | PASS by implementation and scale run |
 | R4.2-c | Verify free-tier limits and use an eligible free option | `docs/REFERENCES.md`; successful Sandbox smoke test and BigQuery pilot loads | PASS for Sandbox use and documented limits |
 | R4.3-a | Retrieve warehouse results into at least one NoSQL database | `pipeline/sync_mongodb.py`; BigQuery daily summary groups 161 exposures + 173 usage; Mongo stored exactly 161 + 173 documents | PASS |
 | R4.3-b | Justify NoSQL type by access patterns | `docs/PHASE5_NOSQL.md`; compact region/band and region/event documents with compound indexes | PASS |
 | R4.4-a | Build ETL with dbt/Spark/Airflow/Glue or equivalent | `pipeline/dbt/`; local `dbt build`: 6 table models, 1 view, 15 tests; 22/22 nodes successful | PASS |
-| R4.4-b | Run ETL automatically or on a schedule | `.github/workflows/warehouse-etl.yml` schedules the BigQuery dbt ETL hourly on GitHub-hosted `ubuntu-latest`; two successful scheduled runs still needed | Partial |
-| R4.5 | Clean, deduplicate, validate schema, handle missing/noisy values, convert formats, and engineer fields | `pipeline/dbt/models/`; `pipeline/verify_etl.py`; 415 raw accepted → 28 duplicate excess removed, 7 schema rejections, 380 curated facts; 7 out-of-range latencies nulled, 8 missing targets kept null; 15 tests pass | PASS for pilot evidence; streaming late-event watermark is Phase 6 |
+| R4.4-b | Run ETL automatically or on a schedule | `.github/workflows/warehouse-etl.yml` schedules BigQuery dbt hourly on GitHub-hosted `ubuntu-latest`; user reports a passing run after fix, but two successful `schedule` event runs are not independently captured in repo evidence | Partial |
+| R4.5 | Clean, deduplicate, validate schema, handle missing/noisy values, convert formats, and engineer fields | `pipeline/dbt/models/`; `pipeline/verify_etl.py`; scale run: 17,268 duplicate excess removed, 14,338 ingestion rejects, 17,052 preprocessing rejects, 511,456 exposure and 460,310 usage facts; 15 dbt tests pass | PASS at scale; streaming late-event watermark is Phase 6 |
 | R4.6-a | Implement a streaming layer | Docker logs: Spark Structured Streaming started on `cosmic-eye-live`; three queries active; Redpanda healthy | PASS |
 | R4.6-b | Demonstrate windows and alerts/filters | Atlas verification: 42 event-count summaries, 180 usage-window summaries, 12 exposure alerts, 10 usage alerts; 2-minute watermark in Spark logs | PASS |
 | R4.6-c | Show streaming results on a live dashboard/output | `Invoke-WebRequest http://localhost:8501/_stcore/health` returned HTTP 200; Streamlit displays Atlas metrics/alerts with 5-second refresh | PASS |
@@ -28,18 +28,18 @@
 | R4.7-d | Optimization with before/after execution times | `queries/nosql/run_optimization.py`; 15 iterations: collection scan median 20.94 ms / 161 docs, index median 20.68 ms / 1 doc; results equal; appendix records small-pilot timing limitation | PASS (index efficiency shown; no material wall-time gain claimed) |
 | R4.7-e | Document every query with question, text, sample output, and timing; scripts in GitHub | `docs/QUERY_APPENDIX.md` contains captured SQL, MongoDB, and streaming outputs/timing; query scripts pushed to `main` in commit `1e7c3c7` | PASS |
 | R4.7-f | Run and explain queries live | `queries/README.md` gives commands; `queries/run_query.py q01` and `all` and Mongo runner were executed live | PASS for runnable demo; team practice remains |
-| R6-a | Proposal with problem, architecture, tools, dataset | `docs/PROPOSAL.md`; awaiting approval | Draft |
-| R6-b | Working GitHub implementation with README/setup instructions | Existing web app exists; pipeline and GitHub remote not yet available | Not started |
-| R6-c | Final report with results and learnings | `docs/FINAL_REPORT.md` to be created in Phase 9 | Not started |
-| R6-d | Live end-to-end demo and presentation | `docs/DEMO_SCRIPT.md` and presentation outline planned for Phase 9 | Not started |
+| R6-a | Proposal with problem, architecture, tools, dataset | `docs/PROPOSAL.md`; implementation, project ID, hardware, and GitHub URL recorded | PASS; fill student names |
+| R6-b | Working GitHub implementation with README/setup instructions | GitHub repository; root README links `docs/PIPELINE_README.md`; setup and run docs exist | PASS for published code and instructions |
+| R6-c | Final report with results and learnings | `docs/FINAL_REPORT.md`; measured results and limitations recorded; student names/screenshots marked | Partial until student additions |
+| R6-d | Live end-to-end demo and presentation | `docs/DEMO_SCRIPT.md`, `docs/PRESENTATION_OUTLINE.md`; dashboard and stream previously live-verified; final rehearsal/screenshots remain | Partial until rehearsal evidence |
 | R6-e | Optional demo video | Optional; not required and excluded from planned scope | Not required |
-| R7-ARCH | Prioritize architecture and design (20%) | Phase 0 proposal and approval gate | In progress |
-| R7-IMPL | Complete all pipeline stages (25%) | Later implementation evidence | Not started |
-| R7-STREAM | Prioritize real-time streaming (20%) | Broker, continuous calculations, alert, and dashboard plan | Planned |
+| R7-ARCH | Prioritize architecture and design (20%) | `docs/PROPOSAL.md`; implemented architecture and current trade-offs are documented | PASS; team names remain |
+| R7-IMPL | Complete all pipeline stages (25%) | Phases 1-8 implemented and measured; GitHub scheduled-run evidence remains partial under R4.4-b | Partial |
+| R7-STREAM | Prioritize real-time streaming (20%) | Spark Structured Streaming, Redpanda, MongoDB live metrics/alerts, and Streamlit dashboard were run and verified in Phase 6/7 | PASS |
 | R7-SCALE | Report scale/volume/technical depth (10%) | `docs/PHASE8_SCALE_INSIGHTS.md`: 1,006,082 BigQuery raw events; 946.84 events/s completed-run rate; 1.12 GiB raw+curated; Atlas 0.51 MiB data+indexes | PASS |
 | R7-INSIGHTS | Provide useful insights and visualization (10%) | `dashboard/pages/1_Warehouse_Insights.py`; five live BigQuery charts and captured takeaways in `docs/PHASE8_SCALE_INSIGHTS.md` | PASS |
-| R7-REPORT | Complete report (10%) | Phase 9 report planned | Not started |
-| R7-DEMO | Prepare presentation/demo (5%) | Phase 9 materials and team rehearsal planned | Not started |
+| R7-REPORT | Complete report (10%) | `docs/FINAL_REPORT.md`, `docs/QUERY_APPENDIX.md`, `docs/REFERENCES.md`; add team names/screenshots | Partial until student additions |
+| R7-DEMO | Prepare presentation/demo (5%) | `docs/PRESENTATION_OUTLINE.md`, `docs/DEMO_SCRIPT.md`; both-member rehearsal not yet evidenced | Partial |
 
 ## Phase 1 evidence
 
@@ -126,3 +126,13 @@
 | Five business-insight visualizations | `dashboard\\pages\\1_Warehouse_Insights.py`; AppTest: 0 exceptions, 5 chart headings, actual metrics 511,456 exposures / 460,310 app events / 10 active regions, and five data-derived takeaways recorded in `docs/PHASE8_SCALE_INSIGHTS.md` | PASS |
 | Dashboard and stream resumed | Temporary insights app HTTP 200; main dashboard health HTTP 200; Redpanda healthy and Spark container restarted after the scale run | PASS |
 
+
+## Phase 9 evidence
+
+| Phase 9 item | Evidence | Status |
+|---|---|---|
+| README and pipeline guide | Root `README.md` links `docs/PIPELINE_README.md`; the guide links architecture, setup, phase reports, queries, and references | PASS |
+| Final report | `docs/FINAL_REPORT.md` covers problem, architecture, provenance, design, free limits, results, lessons, and limitations; team names/screenshots marked for the students | Partial until manual additions |
+| Presentation and demo | `docs/PRESENTATION_OUTLINE.md`, `docs/DEMO_SCRIPT.md`, optional `docs/DEMO_VIDEO_STORYBOARD.md` | PASS for documents; rehearsal remains |
+| Proposal and status audit | `docs/PROPOSAL.md` updated with deployed project/repository and current architecture; workflow, phase docs, handoff notes, and checklist reviewed | PASS |
+| Automatic schedule evidence | User reports a passing run after the workflow fix; private Actions history could not be inspected here (`gh` CLI unavailable). Two successful `schedule` event runs are still required | Partial |

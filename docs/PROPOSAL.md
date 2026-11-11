@@ -1,11 +1,12 @@
 # Cosmic Eye Telemetry Pipeline — Proposal (Phase 0)
 
-**Status:** Draft for approval. No cloud resources have been created.
+**Status:** Implemented design; updated in Phase 9 to match the verified pipeline. BigQuery Sandbox and Atlas resources are active for the course demo and must be removed after the final viva.
 
 **Course:** Big Data Analytics, 23BSDA5D54, Jain University  
 **Team:** Member 1 — TBD; Member 2 — TBD  
-**Google Cloud project ID:** `cosmic-eye-telemetry-demo` (suggested; availability not checked)  
-**GitHub repository:** TBD; this workspace currently has no `.git` directory or remote URL.
+**Google Cloud project ID:** `cosmic-eye-telemetry-demo`
+**GitHub repository:** `https://github.com/chaithanyabs441-ux/cosmic-eye-telemetry-pipeline`
+**Hardware:** Windows 10, Intel Core i5-11400F, GTX 1650, 16 GiB RAM. The GPU is unused.
 
 ## Problem statement
 
@@ -22,17 +23,17 @@ flowchart LR
     BUS --> INGEST[Python batch consumer]
     INGEST -->|short in-memory batches / BigQuery load jobs| RAW[BigQuery raw dataset]
     RAW -->|scheduled dbt SQL + validation| CUR[BigQuery curated dataset]
-    CUR -->|scheduled retrieval job| MONGO[MongoDB Atlas Free]
+    CUR -->|local retrieval job when Atlas IP is allowed| MONGO[MongoDB Atlas Free]
     BUS -->|continuous consumer: windows and threshold rules| MONGO
     MONGO --> DASH[Local Streamlit live dashboard]
-    GH[GitHub Actions schedule] -->|dbt and warehouse-to-NoSQL jobs| CUR
+    GH[GitHub Actions hourly schedule] -->|dbt build and tests only| CUR
 ```
 
 The local broker is only a short-lived transport buffer. Topics will have bounded retention; generated primary data will not be written to local CSV, JSONL, Parquet, SQLite, or other files. A stop/cleanup command will remove the broker container and its temporary storage. The authoritative raw and curated tables will exist only in BigQuery. MongoDB will hold derived query results and live summaries required by the NoSQL and dashboard stages.
 
-The source adapter will make bounded, documented IRSA SIA2 metadata queries. No FITS image products are needed for this analytics pipeline. Real metadata fields (such as observation ID, wavelength bounds, sky position, observation time, calibration level, and access URL) retain a source and retrieval timestamp. Synthetic quality metrics and synthetic usage records receive `is_synthetic=true` and generator provenance. Real archive records receive `is_synthetic=false` and IRSA provenance. Synthetic sessions use random anonymous IDs and contain no personal data.
+The source adapter makes bounded, documented IRSA SIA2 metadata queries. No FITS image products are needed for this analytics pipeline. Real metadata fields (such as observation ID, wavelength bounds, sky position, observation time, calibration level, and access URL) retain a source and retrieval timestamp. Synthetic quality metrics and synthetic usage records receive `is_synthetic=true` and generator provenance. When an event references IRSA metadata, `metadata_is_synthetic=false` and the IRSA source/access time are retained; the event-level `is_synthetic` remains true because the generated event envelope and quality metrics are synthetic. Synthetic sessions use random anonymous IDs and contain no personal data.
 
-## Proposed tools and trade-offs
+## Selected tools and trade-offs
 
 | Pipeline layer | Proposed tool | Reason and constraint |
 |---|---|---|
@@ -105,8 +106,8 @@ docs/                     Proposal, checklist, references, report, query appendi
 
 The existing app and its files will stay in place and will not be refactored. Data files, generated histories, service-account credentials, Atlas connection strings, `.env`, and workflow secret values must never be committed. Phase 1 will update `.gitignore` and `.env.example` before adding credentials or pipeline data code.
 
-## Phase gates and evidence plan
+## Phase gates and evidence
 
-This proposal covers R6a, R4.1c, and the design of R4.2c. Implementation remains not started. Later evidence will include cloud table schemas/counts/storage, producer/consumer counts and rates, scheduler run history, NoSQL counts/indexes, live dashboard captures, all required query text/output/timings, and teardown confirmation. No sample output or execution result will be invented.
+The original Phase 0 proposal gate has been passed by proceeding through Phases 1–8. Measured implementations and current results are recorded in [the Phase 8 report](PHASE8_SCALE_INSIGHTS.md), [the final report](FINAL_REPORT.md), and [the query appendix](QUERY_APPENDIX.md). Current counts exceed one million accepted raw events. The hourly GitHub Actions workflow is present; verify and retain two successful `schedule` event runs before claiming the automatic-schedule requirement is fully evidenced. MongoDB sync runs locally because Atlas IP allow-listing cannot safely accommodate GitHub-hosted runner IP changes.
 
-**Approval gate:** confirm this provisional title and design before Phase 1. Phase 1 will then walk through accounts and local tools step by step; it will not create billable resources or enable GCP billing.
+**Team names:** fill in both member names before submission. The project remains free-tier-only; do not attach a billing account to BigQuery Sandbox.

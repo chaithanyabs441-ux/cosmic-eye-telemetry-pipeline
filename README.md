@@ -1,5 +1,10 @@
 # 🌌 Cosmic Eye
 
+> **Big Data Analytics course project:** the telemetry pipeline, setup, run
+> instructions, architecture, and measured phase reports are documented in
+> [the pipeline guide](docs/PIPELINE_README.md). The pipeline is an addition to
+> this existing SPHEREx application.
+
 <div align="center">
 
 ### 🔭 Explore the infrared universe with NASA SPHEREx archive data

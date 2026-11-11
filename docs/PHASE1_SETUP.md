@@ -151,38 +151,27 @@ alert.
    indexes), 100 read/write operations per second, and one free cluster per
    Atlas project. The smoke test creates then drops one temporary database.
 
-## 8. GitHub and automated-workflow account
+## 8. GitHub repository and scheduled workflow
 
-1. Create a **private** repository on GitHub (for example
-   `cosmic-eye-telemetry-pipeline`). Do not upload `.env`, `secrets/`, service
-   account keys, or generated data. Review `git status --short` before every
-   commit.
-2. This workspace currently has no Git repository metadata or remote. In
-   PowerShell at the project root, run these commands, replacing the URL with
-   the HTTPS URL shown on your repository page:
+The project repository is already created and connected at
+`https://github.com/chaithanyabs441-ux/cosmic-eye-telemetry-pipeline` on branch
+`main`. **Do not run `git init`, create another repository, or replace the
+remote.** Before any future commit, review `git status --short` and confirm that
+`.env`, `secrets/`, service account keys, generated data, and `actions-runner/`
+are not staged. Never share tokens or secret values.
 
-   ```powershell
-   git init
-   git branch -M main
-   git status --short
-   git add .
-   git status --short
-   git commit -m "Set up course pipeline environment"
-   git remote add origin https://github.com/OWNER/REPOSITORY.git
-   git push -u origin main
-   ```
+The hourly workflow is in `.github/workflows/warehouse-etl.yml`. It runs the
+BigQuery dbt build on GitHub-hosted `ubuntu-latest`; it does not connect to
+MongoDB Atlas. Open GitHub **Actions > BigQuery raw-to-curated ETL** to inspect
+run history. Scheduled runs can be delayed; the cron is once an hour at minute
+17 India time, not every 17 minutes. A manual **Run workflow** invocation is a
+manual test, not evidence of a scheduled run. Capture two successful runs
+whose event type is scheduled before marking R4.4-b fully satisfied.
 
-   Before committing, check that `.env`, `secrets/`, service account keys, and
-   generated data do not appear in the staged file list. If one appears, stop
-   and remove it from the Git index before committing. Use GitHub's browser
-   sign-in flow if prompted; do not share a token here.
-3. GitHub Free currently includes 2,000 Actions minutes/month for private
-   repositories; standard hosted runners are free for public repositories.
-   Scheduled workflows have a 5-minute minimum interval and can start late.
-   Phase 4 will add the actual scheduled ETL job once its code and safe cloud
-   authentication are ready; no empty/no-op schedule is created in this phase.
-   To review included usage, open GitHub profile menu → **Settings → Billing
-   and licensing → Usage**; enable usage notifications for Actions if shown.
+GitHub Free currently includes 2,000 Actions minutes/month for private
+repositories; standard hosted runners are free for public repositories. To
+review included usage, open GitHub profile menu ? **Settings > Billing and
+licensing ? Usage**; enable Actions usage notifications if shown.
 
 ## 9. Run the three smoke checks
 
