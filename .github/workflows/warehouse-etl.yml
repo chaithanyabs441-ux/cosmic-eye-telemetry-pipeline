@@ -11,6 +11,8 @@ permissions:
 
 jobs:
   build-curated:
+    # Hosted runners are free for this project. Keep Atlas access limited to
+    # the PC IP; run the optional warehouse-to-Mongo sync locally when needed.
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
@@ -18,7 +20,6 @@ jobs:
       BIGQUERY_LOCATION: US
       BIGQUERY_RAW_DATASET: raw
       BIGQUERY_CURATED_DATASET: curated
-      MONGODB_DATABASE: cosmic_eye
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -35,11 +36,6 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/cosmic-eye-gcp-key.json
         run: dbt build --project-dir pipeline/dbt --profiles-dir pipeline/dbt
-      - name: Sync compact curated summaries to MongoDB Atlas
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/cosmic-eye-gcp-key.json
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        run: python pipeline/sync_mongodb.py
       - name: Remove temporary credentials
         if: always()
         env:
