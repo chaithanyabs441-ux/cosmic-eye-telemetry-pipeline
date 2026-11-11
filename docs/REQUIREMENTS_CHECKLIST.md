@@ -26,7 +26,7 @@
 | R4.7-b | At least 5 NoSQL queries, including indexed query | `queries/nosql/run_queries.py`; six Atlas queries ran; n06 `explain` used `region_band_day_lookup` and examined 1 doc/key | PASS |
 | R4.7-c | At least 3 continuous stream queries, including window and alert/filter | `pipeline/streaming.py`, `queries/streaming/README.md`; live verification: 63 event-count summaries, 280 latency-window summaries, 18 exposure alerts, 15 usage alerts | PASS |
 | R4.7-d | Optimization with before/after execution times | `queries/nosql/run_optimization.py`; 15 iterations: collection scan median 20.94 ms / 161 docs, index median 20.68 ms / 1 doc; results equal; appendix records small-pilot timing limitation | PASS (index efficiency shown; no material wall-time gain claimed) |
-| R4.7-e | Document every query with question, text, sample output, and timing; scripts in GitHub | `docs/QUERY_APPENDIX.md` has live-captured SQL and Mongo output/timing, stream output and batch evidence. Local scripts exist; GitHub push not yet verified/authorized | Partial (push pending) |
+| R4.7-e | Document every query with question, text, sample output, and timing; scripts in GitHub | `docs/QUERY_APPENDIX.md` contains captured SQL, MongoDB, and streaming outputs/timing; query scripts pushed to `main` in commit `1e7c3c7` | PASS |
 | R4.7-f | Run and explain queries live | `queries/README.md` gives commands; `queries/run_query.py q01` and `all` and Mongo runner were executed live | PASS for runnable demo; team practice remains |
 | R6-a | Proposal with problem, architecture, tools, dataset | `docs/PROPOSAL.md`; awaiting approval | Draft |
 | R6-b | Working GitHub implementation with README/setup instructions | Existing web app exists; pipeline and GitHub remote not yet available | Not started |
@@ -111,6 +111,6 @@
 | Three continuous streaming query definitions and live output | `queries/streaming/README.md`; `pipeline\\.venv\\Scripts\\python.exe pipeline\\verify_streaming.py` â†’ 343 metric documents (63 + 280) and 33 alerts (18 + 15) | PASS |
 | Optimization comparison | `pipeline\\.venv\\Scripts\\python.exe queries\\nosql\\run_optimization.py` â†’ 15 iterations; collection scan median 20.94 ms / 161 documents examined; compound index median 20.68 ms / 1 document examined; same one result | PASS; wall-time difference is within network noise at pilot scale |
 | Query appendix | `docs/QUERY_APPENDIX.md`; live samples and timings captured for warehouse and Atlas queries; streaming query sample counts and observed batch timing documented | PASS for local appendix |
-| Query scripts available for GitHub | Query runners and SQL files are present in local working tree; no commit or push performed in this phase | Partial; publish after review |
+| Query scripts available for GitHub | `git push origin main` â†’ `c8b6eea..1e7c3c7 main -> main`; query files and appendix included; `actions-runner/` was not included | PASS |
 | Live query demo instructions | `queries/README.md`; run one or all warehouse queries, all Mongo queries, or inspect current streaming state | PASS |
 
