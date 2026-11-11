@@ -1,6 +1,6 @@
 # Course Requirements Checklist
 
-**Phase 4 status:** PARTIAL - dbt ETL and 15 data tests pass in BigQuery; the user reports the GitHub manual run passes. The workflow now uses Node.js 24 compatible action versions in source. Two successful scheduled runs have not been observed; user elected to continue later phases while this evidence remains open. Push the action-version update, verify the warning is gone in GitHub, and still collect two scheduled-success records before final audit. The project-wide storage view still returns no rows.
+**Phase 4 status:** PARTIAL - dbt ETL and 15 data tests pass in BigQuery; GitHub Actions now schedules the BigQuery ETL on a hosted runner only. Capture two successful scheduled runs. The MongoDB sync is verified locally; Atlas access from GitHub-hosted runners is excluded to preserve the narrow IP allow-list. The project-wide storage view still returns no rows.
 
 | Requirement ID | What will satisfy it | File / query / evidence | Status |
 |---|---|---|---|
@@ -17,17 +17,17 @@
 | R4.3-a | Retrieve warehouse results into at least one NoSQL database | `pipeline/sync_mongodb.py`; BigQuery daily summary groups 161 exposures + 173 usage; Mongo stored exactly 161 + 173 documents | PASS |
 | R4.3-b | Justify NoSQL type by access patterns | `docs/PHASE5_NOSQL.md`; compact region/band and region/event documents with compound indexes | PASS |
 | R4.4-a | Build ETL with dbt/Spark/Airflow/Glue or equivalent | `pipeline/dbt/`; local `dbt build`: 6 table models, 1 view, 15 tests; 22/22 nodes successful | PASS |
-| R4.4-b | Run ETL automatically or on a schedule | `.github/workflows/warehouse-etl.yml`; manual run reported successful; no successful `schedule` event observed; user elected to proceed while scheduled proof remains pending | Partial |
+| R4.4-b | Run ETL automatically or on a schedule | `.github/workflows/warehouse-etl.yml` schedules the BigQuery dbt ETL hourly on GitHub-hosted `ubuntu-latest`; two successful scheduled runs still needed | Partial |
 | R4.5 | Clean, deduplicate, validate schema, handle missing/noisy values, convert formats, and engineer fields | `pipeline/dbt/models/`; `pipeline/verify_etl.py`; 415 raw accepted → 28 duplicate excess removed, 7 schema rejections, 380 curated facts; 7 out-of-range latencies nulled, 8 missing targets kept null; 15 tests pass | PASS for pilot evidence; streaming late-event watermark is Phase 6 |
-| R4.6-a | Implement a streaming layer | `docs/PROPOSAL.md` local Redpanda broker | Planned |
-| R4.6-b | Demonstrate windows and alerts/filters | `docs/PROPOSAL.md` three PySpark Structured Streaming queries | Planned |
-| R4.6-c | Show streaming results on a live dashboard/output | `docs/PROPOSAL.md` local Streamlit dashboard | Planned |
-| R4.7-a | At least 8 analytical warehouse SQL queries covering required patterns | `queries/warehouse/` to be created | Not started |
-| R4.7-b | At least 5 NoSQL queries, including indexed query | `queries/nosql/` to be created | Not started |
-| R4.7-c | At least 3 continuous stream queries, including window and alert/filter | `queries/streaming/` to be created | Planned |
-| R4.7-d | Optimization with before/after execution times | Partitioning/clustering proposed; timings must be captured later | Planned |
-| R4.7-e | Document every query with question, text, sample output, and timing; scripts in GitHub | Query appendix/scripts to be created; no GitHub remote is available here | Not started |
-| R4.7-f | Run and explain queries live | Demo instructions to be created; team practice still required | Not started |
+| R4.6-a | Implement a streaming layer | Docker logs: Spark Structured Streaming started on `cosmic-eye-live`; three queries active; Redpanda healthy | PASS |
+| R4.6-b | Demonstrate windows and alerts/filters | Atlas verification: 42 event-count summaries, 180 usage-window summaries, 12 exposure alerts, 10 usage alerts; 2-minute watermark in Spark logs | PASS |
+| R4.6-c | Show streaming results on a live dashboard/output | `Invoke-WebRequest http://localhost:8501/_stcore/health` returned HTTP 200; Streamlit displays Atlas metrics/alerts with 5-second refresh | PASS |
+| R4.7-a | At least 8 analytical warehouse SQL queries covering required patterns | `queries/warehouse/q01`–`q08`; all eight ran live in BigQuery with real sample rows, bytes, and client elapsed time in `docs/QUERY_APPENDIX.md` | PASS |
+| R4.7-b | At least 5 NoSQL queries, including indexed query | `queries/nosql/run_queries.py`; six Atlas queries ran; n06 `explain` used `region_band_day_lookup` and examined 1 doc/key | PASS |
+| R4.7-c | At least 3 continuous stream queries, including window and alert/filter | `pipeline/streaming.py`, `queries/streaming/README.md`; live verification: 63 event-count summaries, 280 latency-window summaries, 18 exposure alerts, 15 usage alerts | PASS |
+| R4.7-d | Optimization with before/after execution times | `queries/nosql/run_optimization.py`; 15 iterations: collection scan median 20.94 ms / 161 docs, index median 20.68 ms / 1 doc; results equal; appendix records small-pilot timing limitation | PASS (index efficiency shown; no material wall-time gain claimed) |
+| R4.7-e | Document every query with question, text, sample output, and timing; scripts in GitHub | `docs/QUERY_APPENDIX.md` has live-captured SQL and Mongo output/timing, stream output and batch evidence. Local scripts exist; GitHub push not yet verified/authorized | Partial (push pending) |
+| R4.7-f | Run and explain queries live | `queries/README.md` gives commands; `queries/run_query.py q01` and `all` and Mongo runner were executed live | PASS for runnable demo; team practice remains |
 | R6-a | Proposal with problem, architecture, tools, dataset | `docs/PROPOSAL.md`; awaiting approval | Draft |
 | R6-b | Working GitHub implementation with README/setup instructions | Existing web app exists; pipeline and GitHub remote not yet available | Not started |
 | R6-c | Final report with results and learnings | `docs/FINAL_REPORT.md` to be created in Phase 9 | Not started |
@@ -81,7 +81,7 @@
 | BigQuery raw-to-curated build | `pipeline\\.venv\\Scripts\\python.exe pipeline\\run_etl.py` → two corrected-partition builds passed `22/22` nodes each; 6 table models, 1 view, 15 tests; second build completed in 55.77 seconds with unchanged fact counts | PASS |
 | Deduplication and schema validation | `pipeline\\verify_etl.py` → exposure 219 rows/200 distinct (19 duplicates); usage 196/187 (9 duplicates); 7 `latency_wrong_type` rejections | PASS |
 | Curated data | `pipeline\\verify_etl.py` → 200 exposure facts + 180 usage facts; 7 out-of-range latencies represented as NULL; all current fact partition timestamps are `ingested_at`, with 60-day expiration | PASS |
-| Automated schedule | `.github/workflows/warehouse-etl.yml` hourly schedule, Node.js 24 compatible actions, BigQuery dbt build then Mongo sync, and temporary secret-file cleanup | Manual workflow run reported successful; MongoDB sync is verified locally; GitHub `MONGODB_URI` secret/push and two successful scheduled runs remain pending; user elected to proceed, revisit before final audit |
+| Automated schedule | `.github/workflows/warehouse-etl.yml` hourly GitHub-hosted dbt build and data-quality tests; temporary GCP key cleanup | Workflow update must be pushed and two successful scheduled runs captured |
 
 ## Phase 5 evidence
 
@@ -91,5 +91,26 @@
 | Exposure summaries | BigQuery returned 161 daily region/band groups; Mongo contains 161 summary documents | PASS |
 | Usage summaries | BigQuery returned 173 daily region/event groups; Mongo contains 173 summary documents | PASS |
 | Mongo indexes and sample documents | `docs/PHASE5_NOSQL.md`; indexes `region_band_day_lookup`, `region_event_day_lookup`; sample aggregate docs captured | PASS |
-| Automated BigQuery-to-Mongo schedule | Workflow step added; GitHub secret and push not yet verified | Partial |
+| BigQuery-to-Mongo retrieval | `pipeline/sync_mongodb.py`; locally verified against BigQuery and Atlas. Hosted Actions schedule excludes this step because Atlas cannot allow-list the changing hosted-runner IP | PASS for retrieval; not scheduled |
+
+## Phase 6 evidence
+
+| Phase 6 item | Evidence | Status |
+|---|---|---|
+| Spark Structured Streaming from Redpanda | Docker logs report 3 active queries; 40-event bursts consumed; `pipeline/verify_streaming.py` confirms Atlas writes | PASS |
+| Tumbling/sliding windows and watermark | Atlas contains 42 event-count and 180 usage-window summaries; Spark log confirms 2-minute watermark | PASS |
+| Event-triggered alert and live dashboard | Atlas contains 12 exposure and 10 usage alerts; Streamlit health endpoint returned HTTP 200 | PASS |
+| One-command demo and shutdown | `scripts/demo_streaming.ps1` published 40 synthetic events and opened the dashboard; stop script is available | PASS |
+
+## Phase 7 evidence
+
+| Phase 7 item | Evidence | Status |
+|---|---|---|
+| Eight warehouse analytics queries | `pipeline\\.venv\\Scripts\\python.exe queries\\run_query.py all`; actual output from all eight queries in `docs/QUERY_APPENDIX.md`, including question, SQL, sample rows, returned row count, client time, and bytes processed | PASS |
+| Six MongoDB query patterns and indexed query | `pipeline\\.venv\\Scripts\\python.exe queries\\nosql\\run_queries.py` â†’ `MongoDB queries: PASS`; n06 `explain`: `region_band_day_lookup`, 1 document examined, 1 key examined, 1 returned | PASS |
+| Three continuous streaming query definitions and live output | `queries/streaming/README.md`; `pipeline\\.venv\\Scripts\\python.exe pipeline\\verify_streaming.py` â†’ 343 metric documents (63 + 280) and 33 alerts (18 + 15) | PASS |
+| Optimization comparison | `pipeline\\.venv\\Scripts\\python.exe queries\\nosql\\run_optimization.py` â†’ 15 iterations; collection scan median 20.94 ms / 161 documents examined; compound index median 20.68 ms / 1 document examined; same one result | PASS; wall-time difference is within network noise at pilot scale |
+| Query appendix | `docs/QUERY_APPENDIX.md`; live samples and timings captured for warehouse and Atlas queries; streaming query sample counts and observed batch timing documented | PASS for local appendix |
+| Query scripts available for GitHub | Query runners and SQL files are present in local working tree; no commit or push performed in this phase | Partial; publish after review |
+| Live query demo instructions | `queries/README.md`; run one or all warehouse queries, all Mongo queries, or inspect current streaming state | PASS |
 
