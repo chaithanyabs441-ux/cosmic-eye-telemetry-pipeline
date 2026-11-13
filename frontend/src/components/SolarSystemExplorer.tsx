@@ -1,7 +1,10 @@
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { AlertCircle, Clock3, Maximize2, Minimize2, Pause, Play, RotateCcw, Search, Sun, Telescope } from 'lucide-react';
-import { fetchJson } from '../api/client';
+import { fetchJson, observationPreviewUrl } from '../api/client';
+import { searchObservations } from '../api/observations';
+import type { Observation } from '../types/observation';
+import ObservationViewer from './ObservationViewer';
 
 type OrbitRecord = {
   id: string; name: string; type: 'planet' | 'moon' | 'asteroid';
@@ -57,37 +60,35 @@ function mapPosition(auVector: THREE.Vector3) {
   return auVector.multiplyScalar(mappedDistance / distance);
 }
 
-type NasaImageResult = { title: string; description: string; date?: string; imageUrl: string; nasaId: string };
-const nasaImageCache = new Map<string, NasaImageResult | null>();
-type ImageBody = { name: string; type: string; parent_name?: string };
+function apparentCoordinates(body: OrbitRecord | null, model: ModelResponse | null, includeSun = false) {
+  if (!model || (!body && !includeSun)) return null;
+  const earth = model.planets.find((planet) => planet.name === 'Earth');
+  if (!earth) return null;
+  const earthPosition = orbitalVector(earth, model.epoch_jd);
+  let bodyPosition = new THREE.Vector3();
+  if (body) {
+    bodyPosition = orbitalVector(body, model.epoch_jd);
+    if (body.type === 'moon' && body.parent_id) {
+      const parent = model.planets.find((planet) => planet.id === body.parent_id);
+      if (parent) bodyPosition.add(orbitalVector(parent, model.epoch_jd));
+    }
+  }
+  const lineOfSight = bodyPosition.sub(earthPosition);
+  const distance = lineOfSight.length();
+  if (!Number.isFinite(distance) || distance < 1e-12) return null;
 
-async function findNasaImage(body: ImageBody | null, signal: AbortSignal): Promise<NasaImageResult | null> {
-  if (!body) return null;
-  const query = body.type === 'moon' ? `${body.name} ${body.parent_name} moon` : body.type === 'asteroid' ? `${body.name} asteroid spacecraft` : `${body.name} planet spacecraft`;
-  const cacheKey = query.toLowerCase();
-  if (nasaImageCache.has(cacheKey)) return nasaImageCache.get(cacheKey) ?? null;
-  const response = await fetch(`https://images-api.nasa.gov/search?${new URLSearchParams({ q: query, media_type: 'image', page_size: '30' })}`, { signal });
-  if (!response.ok) throw new Error('NASA image search is temporarily unavailable.');
-  const payload = await response.json() as { collection?: { items?: Array<{ data?: Array<{ title?: string; description?: string; date_created?: string; nasa_id?: string }>; links?: Array<{ rel?: string; href?: string }> }> } };
-  const targetName = body.name.toLowerCase();
-  const match = (payload.collection?.items ?? []).find((item) => {
-    const data = item.data?.[0];
-    const searchableText = `${data?.title ?? ''} ${data?.description ?? ''}`.toLowerCase();
-    const looksLikeIllustration = /artist concept|artist's concept|illustration|rendering|simulation|simulated view/.test(searchableText);
-    return Boolean(data?.nasa_id && data.title?.toLowerCase().includes(targetName) && !looksLikeIllustration && item.links?.some((link) => link.rel === 'preview' && link.href));
-  });
-  const data = match?.data?.[0];
-  const imageUrl = match?.links?.find((link) => link.rel === 'preview')?.href;
-  const result = data?.nasa_id && imageUrl ? {
-    title: data.title ?? body.name,
-    description: data.description ?? '',
-    date: data.date_created,
-    imageUrl,
-    nasaId: data.nasa_id,
-  } : null;
-  nasaImageCache.set(cacheKey, result);
-  return result;
+  // orbitalVector stores ecliptic x, z, -y in Three.js coordinates.
+  const eclipticY = -lineOfSight.z;
+  const eclipticZ = lineOfSight.y;
+  const obliquity = 23.439281 * DEG;
+  const equatorialY = eclipticY * Math.cos(obliquity) - eclipticZ * Math.sin(obliquity);
+  const equatorialZ = eclipticY * Math.sin(obliquity) + eclipticZ * Math.cos(obliquity);
+  const ra = (Math.atan2(equatorialY, lineOfSight.x) / DEG + 360) % 360;
+  const dec = Math.asin(THREE.MathUtils.clamp(equatorialZ / distance, -1, 1)) / DEG;
+  return { ra, dec };
 }
+
+const solarImageCache = new Map<string, Observation | null>();
 
 function moonOrbitScale(body: OrbitRecord) {
   const distanceKm = body.a_au * AU_KM;
@@ -527,14 +528,20 @@ const SolarBodyList = memo(function SolarBodyList({ bodies, selectedId, onSelect
   </div>;
 });
 
-function NasaImageCard({ image, loading, unavailable, name }: { image: NasaImageResult | null; loading: boolean; unavailable: boolean; name: string }) {
-  if (loading) return <div className="solar-photo-state">Searching NASA’s image archive for {name}…</div>;
-  if (!image) return <div className="solar-photo-state">{unavailable ? 'NASA’s image archive is currently unavailable.' : `No matching captured image of ${name} was found.`}</div>;
+function SpherexImageCard({ observation, loading, error, name, coordinates, onOpen }: {
+  observation: Observation | null; loading: boolean; error: string | null; name: string;
+  coordinates: { ra: number; dec: number } | null; onOpen: () => void;
+}) {
+  const [previewFailed, setPreviewFailed] = useState(false);
+  useEffect(() => setPreviewFailed(false), [observation?.source_url]);
+  if (loading) return <div className="solar-photo-state">Searching the current SPHEREx QR3 archive near {name}…</div>;
+  if (!observation || !coordinates) return <div className="solar-photo-state">{error || `No SPHEREx QR3 image tile is available near ${name}’s calculated sky position.`}</div>;
+  if (previewFailed) return <div className="solar-photo-state">The SPHEREx archive record was found, but its preview could not be rendered. <a href={observation.source_url} target="_blank" rel="noreferrer">Open the FITS source.</a></div>;
   return <figure className="solar-body-photo">
-    <a href={`https://images.nasa.gov/details/${encodeURIComponent(image.nasaId)}`} target="_blank" rel="noreferrer" title="Open this image in NASA’s Image and Video Library">
-      <img src={image.imageUrl} alt={`${name}: ${image.title}`} loading="lazy" />
-    </a>
-    <figcaption><span>{image.title}</span><small>NASA Image and Video Library{image.date ? ` · ${new Date(image.date).getUTCFullYear()}` : ''} · View source</small></figcaption>
+    <button type="button" className="solar-body-photo-button" onClick={onOpen} title="Open this SPHEREx archive tile">
+      <img src={observationPreviewUrl(observation.source_url)} alt={`SPHEREx ${observation.band} image tile near ${name}`} onError={() => setPreviewFailed(true)} />
+    </button>
+    <figcaption><span>{observation.band} field near {name}</span><small>IRSA SPHEREx QR3 · RA {coordinates.ra.toFixed(2)}° · Dec {coordinates.dec.toFixed(2)}° · Open to zoom</small></figcaption>
   </figure>;
 }
 
@@ -548,9 +555,10 @@ export default function SolarSystemExplorer({ onMapMode }: { onMapMode: (mode: '
   const [selectedId, setSelectedId] = useState('399');
   const [focusedId, setFocusedId] = useState<string | null>(null);
   const [hoveredBody, setHoveredBody] = useState<{ body: HoverTarget; x: number; y: number } | null>(null);
-  const [nasaImage, setNasaImage] = useState<NasaImageResult | null>(null);
-  const [imageLoading, setImageLoading] = useState(false);
-  const [imageUnavailable, setImageUnavailable] = useState(false);
+  const [archiveObservation, setArchiveObservation] = useState<Observation | null>(null);
+  const [archiveImageLoading, setArchiveImageLoading] = useState(false);
+  const [archiveImageError, setArchiveImageError] = useState<string | null>(null);
+  const [viewingObservation, setViewingObservation] = useState<Observation | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [followObserver, setFollowObserver] = useState(false);
   const [showMoons, setShowMoons] = useState(true);
@@ -568,20 +576,34 @@ export default function SolarSystemExplorer({ onMapMode }: { onMapMode: (mode: '
 
   const bodies = useMemo(() => model ? [...model.planets, ...model.moons, ...model.asteroids] : [], [model]);
   const selected = bodies.find((body) => body.id === selectedId) ?? model?.planets.find((body) => body.id === selectedId) ?? null;
-  const imageBody = useMemo<ImageBody | null>(() => selected?.type === 'planet' || selected?.type === 'moon' ? selected : selectedId === 'sun' ? { name: 'Sun', type: 'star' } : null, [selected, selectedId]);
+  const imageCoordinates = useMemo(() => apparentCoordinates(selected, model, selectedId === 'sun'), [selected?.id, selectedId, model]);
 
   useEffect(() => {
     const controller = new AbortController();
-    setNasaImage(null);
-    setImageUnavailable(false);
-    if (!imageBody) { setImageLoading(false); return () => controller.abort(); }
-    setImageLoading(true);
-    findNasaImage(imageBody, controller.signal)
-      .then(setNasaImage)
-      .catch(() => { if (!controller.signal.aborted) setImageUnavailable(true); })
-      .finally(() => { if (!controller.signal.aborted) setImageLoading(false); });
+    setArchiveObservation(null);
+    setArchiveImageError(null);
+    const isMappedBody = Boolean(selected) || selectedId === 'sun';
+    if (!isMappedBody || !imageCoordinates) { setArchiveImageLoading(false); return () => controller.abort(); }
+    const cacheKey = `${imageCoordinates.ra.toFixed(3)},${imageCoordinates.dec.toFixed(3)}`;
+    if (solarImageCache.has(cacheKey)) {
+      setArchiveObservation(solarImageCache.get(cacheKey) ?? null);
+      setArchiveImageLoading(false);
+      return () => controller.abort();
+    }
+    setArchiveImageLoading(true);
+    searchObservations(imageCoordinates.ra, imageCoordinates.dec, 0.1, 1, 1)
+      .then((data) => {
+        if (controller.signal.aborted) return;
+        const result = data.items[0] ?? null;
+        solarImageCache.set(cacheKey, result);
+        setArchiveObservation(result);
+      })
+      .catch((reason: unknown) => {
+        if (!controller.signal.aborted) setArchiveImageError(reason instanceof Error ? reason.message : 'Could not query the SPHEREx archive.');
+      })
+      .finally(() => { if (!controller.signal.aborted) setArchiveImageLoading(false); });
     return () => controller.abort();
-  }, [imageBody]);
+  }, [selected?.id, selectedId, imageCoordinates]);
 
   useEffect(() => {
     const syncFullscreen = () => setIsFullscreen(Boolean(document.fullscreenElement));
@@ -646,8 +668,8 @@ export default function SolarSystemExplorer({ onMapMode }: { onMapMode: (mode: '
           <div className="solar-category-tabs">{(['planet', 'moon', 'asteroid', 'all'] as const).map((value) => <button key={value} className={category === value ? 'active' : ''} type="button" onClick={() => setCategory(value)}>{value === 'all' ? 'All' : `${value[0].toUpperCase()}${value.slice(1)}s`}</button>)}</div>
           <label className="solar-body-search"><Search size={14} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search mapped objects" /></label>
           <SolarBodyList bodies={visibleBodies} selectedId={selectedId} onSelect={selectBody} />
-          {selected && <div className="solar-selected-body"><span className={`solar-type-pill ${selected.type}`}>{selected.type}</span><h3>{selected.name}</h3>{(selected.type === 'planet' || selected.type === 'moon') && <NasaImageCard image={nasaImage} loading={imageLoading} unavailable={imageUnavailable} name={selected.name} />}<dl><div><dt>Orbit</dt><dd>{selected.type === 'moon' ? `${(selected.a_au * AU_KM).toLocaleString(undefined, { maximumFractionDigits: 0 })} km` : `${selected.a_au.toFixed(3)} AU`}</dd></div><div><dt>Period</dt><dd>{selected.period_days ? selected.period_days > 365 ? `${(selected.period_days / 365.25).toFixed(2)} years` : `${selected.period_days.toFixed(2)} days` : '—'}</dd></div><div><dt>Spin</dt><dd>{selected.rotation_hours ? `${Math.abs(selected.rotation_hours).toFixed(1)} h${selected.rotation_hours < 0 ? ' · retrograde' : ''}` : 'Not cataloged'}</dd></div><div><dt>Inclination</dt><dd>{selected.inclination_deg.toFixed(2)}°</dd></div></dl><button type="button" className="solar-focus-button" onClick={() => selectBody(selected.id)}>Focus on {selected.name}</button></div>}
-          {!selected && selectedId === 'sun' && <div className="solar-selected-body"><span className="solar-type-pill">Star</span><h3>Sun</h3><NasaImageCard image={nasaImage} loading={imageLoading} unavailable={imageUnavailable} name="Sun" /><p>Central star of the Solar System. Select a planet, moon, or asteroid to inspect its orbit and rotation.</p><button type="button" className="solar-focus-button" onClick={() => selectBody('sun')}>Focus on the Sun</button></div>}
+          {selected && <div className="solar-selected-body"><span className={`solar-type-pill ${selected.type}`}>{selected.type}</span><h3>{selected.name}</h3><SpherexImageCard observation={archiveObservation} loading={archiveImageLoading} error={archiveImageError} name={selected.name} coordinates={imageCoordinates} onOpen={() => { if (archiveObservation) setViewingObservation(archiveObservation); }} /><small>Tile at the body’s JPL-calculated line of sight; this is an infrared sky field, not a resolved close-up of the body.</small><dl><div><dt>Orbit</dt><dd>{selected.type === 'moon' ? `${(selected.a_au * AU_KM).toLocaleString(undefined, { maximumFractionDigits: 0 })} km` : `${selected.a_au.toFixed(3)} AU`}</dd></div><div><dt>Period</dt><dd>{selected.period_days ? selected.period_days > 365 ? `${(selected.period_days / 365.25).toFixed(2)} years` : `${selected.period_days.toFixed(2)} days` : '—'}</dd></div><div><dt>Spin</dt><dd>{selected.rotation_hours ? `${Math.abs(selected.rotation_hours).toFixed(1)} h${selected.rotation_hours < 0 ? ' · retrograde' : ''}` : 'Not cataloged'}</dd></div><div><dt>Inclination</dt><dd>{selected.inclination_deg.toFixed(2)}°</dd></div></dl><button type="button" className="solar-focus-button" onClick={() => selectBody(selected.id)}>Focus on {selected.name}</button></div>}
+          {!selected && selectedId === 'sun' && <div className="solar-selected-body"><span className="solar-type-pill">Star</span><h3>Sun</h3><SpherexImageCard observation={archiveObservation} loading={archiveImageLoading} error={archiveImageError} name="Sun" coordinates={imageCoordinates} onOpen={() => { if (archiveObservation) setViewingObservation(archiveObservation); }} /><small>Tile at the Sun’s JPL-calculated line of sight; this is an infrared sky field, not a resolved image of the Sun.</small><p>Central star of the Solar System. Select a planet, moon, or asteroid to inspect its orbit and rotation.</p><button type="button" className="solar-focus-button" onClick={() => selectBody('sun')}>Focus on the Sun</button></div>}
           {!selected && selectedId === 'spherex' && <div className="solar-selected-body"><span className="solar-type-pill">Observer</span><h3>SPHEREx</h3><p>Illustrative spacecraft marker following its nominal Earth orbit. The displayed orbital phase is not live telemetry.</p><button type="button" className="solar-focus-button" onClick={() => { setFollowObserver(true); setFocusedId('spherex'); }}>Follow SPHEREx</button></div>}
         </aside>
 
@@ -655,6 +677,7 @@ export default function SolarSystemExplorer({ onMapMode }: { onMapMode: (mode: '
         {model && <div className="solar-system-caveat">Current orbital elements from JPL. Distances and sizes are adjusted for visibility; the displayed SPHEREx orbital phase is illustrative.</div>}
         {!!model?.notes.length && <div className="solar-model-note">Partial upstream catalog response: {model.notes.join(' · ')}</div>}
       </div>
+      {viewingObservation && <ObservationViewer observation={viewingObservation} onClose={() => setViewingObservation(null)} />}
     </section>
   );
 }

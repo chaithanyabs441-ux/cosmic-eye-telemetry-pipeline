@@ -8,9 +8,8 @@ with _MESSIER_PATH.open(encoding="utf-8") as _catalog_file:
 
 def get_featured_targets() -> List[Dict]:
     """
-    Return famous targets plus Messier catalog objects with confirmed archive coverage.
-    Coordinates come from SIMBAD; the additional catalog positions were checked against
-    SPHEREx QR2 level-2 image footprints and are kept as a compact static index.
+    Return curated target coordinates. Current SPHEREx QR3 image availability is
+    checked live when a target is selected; historical QR2 coverage is not assumed.
     """
     curated = [
         {

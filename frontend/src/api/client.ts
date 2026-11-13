@@ -17,7 +17,13 @@ export async function fetchJson<T>(path: string, init?: RequestInit): Promise<T>
     cache: 'no-store'
   });
   if (!res.ok) {
-    throw new Error(`Request failed: ${res.status} ${res.statusText}`);
+    let detail = '';
+    try {
+      const payload = await res.json() as { detail?: unknown; message?: unknown };
+      if (typeof payload.detail === 'string') detail = payload.detail;
+      else if (typeof payload.message === 'string') detail = payload.message;
+    } catch { /* Keep the HTTP status if the server did not return JSON. */ }
+    throw new Error(detail || `Request failed: ${res.status} ${res.statusText}`);
   }
   return (await res.json()) as T;
 }

@@ -8,12 +8,13 @@ from app.services.ai_service import resolve_target, get_random_coordinate
 from app.services.solar_system_model_service import get_solar_system_model
 from app.utils.limits import validate_coordinates, validate_pagination
 from app.config import settings
+from app.adapters.irsa_spherex import DEFAULT_COLLECTION
 from typing import List
 
 router = APIRouter()
 
 @router.get("", response_model=ObservationListResponse)
-def get_observations(ra: float = Query(...), dec: float = Query(...), radius: float = Query(0.01), collection: str = Query("spherex_qr2"), page: int = Query(1), page_size: int = Query(10)):
+def get_observations(ra: float = Query(...), dec: float = Query(...), radius: float = Query(0.01), collection: str = Query(DEFAULT_COLLECTION), page: int = Query(1), page_size: int = Query(10)):
     validate_coordinates(ra, dec, radius)
     validate_pagination(page, page_size)
     try:
@@ -22,7 +23,7 @@ def get_observations(ra: float = Query(...), dec: float = Query(...), radius: fl
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/wavelengths", response_model=WavelengthResponse)
-def get_wavelengths(ra: float = Query(...), dec: float = Query(...), radius: float = Query(0.01), collection: str = Query("spherex_qr2")):
+def get_wavelengths(ra: float = Query(...), dec: float = Query(...), radius: float = Query(0.01), collection: str = Query(DEFAULT_COLLECTION)):
     validate_coordinates(ra, dec, radius)
     try:
         return fetch_wavelength_sets(ra, dec, radius, collection)
@@ -37,7 +38,7 @@ def get_featured():
 def ai_search(q: str = Query(...)):
     target = resolve_target(q)
     if not target:
-        raise HTTPException(status_code=404, detail="Database could not find object.")
+        raise HTTPException(status_code=404, detail="Target not found in the local catalog or SIMBAD. Check the name or search by RA and Dec.")
     validate_coordinates(target["ra"], target["dec"], target["search_radius"])
     return target
 

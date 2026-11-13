@@ -88,8 +88,8 @@ Before the scheduled run can work:
 3. On your own PC, open the service-account JSON key in Notepad and paste its
    contents into that GitHub secret field. Save it only in GitHub's secret UI;
    never paste it into chat, commit it, or add it to a normal text file.
-4. Confirm the service account has BigQuery Job User on the project and BigQuery
-   Data Editor on the `raw` and `curated` datasets.
+4. Confirm the service account has BigQuery Job User on the project, BigQuery
+   Data Viewer on `raw`, and BigQuery Data Editor on `curated`.
 5. In **Actions**, verify one workflow run completes. The user reports that a
    manual `workflow_dispatch` run succeeds. Two successful runs whose event is
    `schedule` have not been observed yet; those are still required evidence for

@@ -80,7 +80,7 @@ export default function BrowsePage({ mode = 'recent' }: BrowsePageProps) {
             <p className="browse-note">Newest first · Sample field: RA 304.69°, Dec 42.44° · 0.5° search radius</p>
             {error && <div className="status-message error" role="alert"><AlertCircle size={18} />{error}</div>}
             {loading && <div className="empty-state"><Loader2 size={26} className="spin" /><h2>Loading recent observations</h2><p>Searching the SPHEREx archive for the latest scans in this field.</p></div>}
-            {!loading && !error && results.length === 0 && <div className="empty-state"><Calendar size={28} /><h2>No observations found</h2><p>Try again later or explore a different sky position using Manual Search.</p></div>}
+            {!loading && !error && results.length === 0 && <div className="empty-state"><Calendar size={28} /><h2>No observations found</h2><p>Try again later or search a different sky position.</p></div>}
             {!loading && results.length > 0 && (
               <div className="results-grid">
                 {results.map((obs) => (

@@ -1,13 +1,15 @@
-"""Live charts for synthetic Spark streaming summaries and alerts."""
+﻿"""Live charts for synthetic Spark streaming summaries and alerts."""
 
 from __future__ import annotations
 
 import os
+import socket
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
+import altair as alt
 import streamlit as st
 from dotenv import load_dotenv
 from pymongo import DESCENDING, MongoClient
@@ -16,12 +18,29 @@ ROOT = Path(__file__).resolve().parents[1]
 LOCAL_TZ = "Asia/Kolkata"
 load_dotenv(ROOT / ".env")
 
-st.set_page_config(page_title="Cosmic Eye Live", page_icon="🌌", layout="wide")
-st.title("Cosmic Eye — live pipeline")
-st.caption("Synthetic events → Redpanda → Spark streaming → MongoDB → this dashboard")
+st.set_page_config(page_title="Cosmic Eye Command Center", page_icon="🌌", layout="wide")
+st.markdown(
+    """
+    <style>
+    .block-container {max-width: 1540px; padding: 2rem 2.5rem 3.5rem;}
+    [data-testid="stAppViewContainer"] {background: radial-gradient(ellipse at 80% 0%, #142544 0%, #0b1220 48%, #080d16 100%);}
+    [data-testid="stSidebar"] {background: rgba(11, 18, 32, .96); border-right: 1px solid #22334d;}
+    h1 {letter-spacing: -.035em; font-size: 2.5rem !important;}
+    h2, h3 {letter-spacing: -.02em;}
+    div[data-testid="stVerticalBlockBorderWrapper"] {background: rgba(17, 29, 48, .72); border: 1px solid #263a58; border-radius: 14px;}
+    [data-testid="stMetric"] {padding: .45rem .25rem;}
+    [data-testid="stMetricLabel"] {color: #a9bdd8; font-size: .88rem;}
+    [data-testid="stMetricValue"] {font-size: 1.8rem;}
+    [data-testid="stAlert"] {border-radius: 12px;}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+st.title("Cosmic Eye Command Center")
+st.caption("Live operations view · Redpanda → Spark → MongoDB")
 st.info(
-    "This page visualizes the streaming demo. Its exposure quality values and app events are synthetic; "
-    "it is not a live NASA telescope feed."
+        "This page monitors generated pipeline events. Exposure quality values and app actions are synthetic; "
+        "this is not live telescope data or personal user analytics."
 )
 
 TIME_RANGES: dict[str, int | None] = {
@@ -31,6 +50,21 @@ TIME_RANGES: dict[str, int | None] = {
     "60 minutes": 60,
     "All available": None,
 }
+
+
+@st.cache_data(ttl=5, show_spinner=False)
+def check_redpanda() -> tuple[str, str]:
+    """Check the configured broker socket without publishing or changing data."""
+    endpoint = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092").strip().split(",", 1)[0]
+    try:
+        if endpoint.startswith("[") and "]:" in endpoint:
+            host, port_text = endpoint[1:].rsplit("]:", 1)
+        else:
+            host, port_text = endpoint.rsplit(":", 1)
+        with socket.create_connection((host, int(port_text)), timeout=1.0):
+            return "Reachable", endpoint
+    except (OSError, ValueError):
+        return "Unavailable", endpoint
 
 
 @st.cache_resource
@@ -113,6 +147,15 @@ def live_panel(range_label: str, auto_refresh: bool) -> None:
 
         metrics = snapshot["metrics"]
         alerts = snapshot["alerts"]
+        broker_status, broker_endpoint = check_redpanda()
+        latest_update = metrics["updated_at"].dropna().max() if not metrics.empty and "updated_at" in metrics else None
+        if latest_update is not None and pd.notna(latest_update):
+            output_age_seconds = max(0, int((pd.Timestamp.now(tz=LOCAL_TZ) - latest_update).total_seconds()))
+            spark_status = "Recent output" if output_age_seconds <= 90 else "Idle"
+            output_detail = f"Last summary {output_age_seconds // 60}m {output_age_seconds % 60}s ago"
+        else:
+            spark_status = "Waiting for output"
+            output_detail = "No saved metric windows yet"
         event_rows, usage_rows = latest_five_minute_metrics(metrics)
         events_last_five = int(pd.to_numeric(event_rows.get("event_count", pd.Series(dtype=float)), errors="coerce").fillna(0).sum())
         latency_values = pd.DataFrame()
@@ -129,22 +172,39 @@ def live_panel(range_label: str, auto_refresh: bool) -> None:
             latency_label = "No recent requests"
 
         st.caption(
-            f"Showing {range_label.lower()} of saved stream results · "
+            f"Showing {range_label.lower()} of saved stream results Â· "
             f"last database read {pd.Timestamp(snapshot['read_at']).tz_convert(LOCAL_TZ).strftime('%H:%M:%S')} IST"
         )
-        kpis = st.columns(5)
-        kpis[0].metric("Alerts stored", f"{snapshot['alert_total']:,}")
-        kpis[1].metric("Window summaries stored", f"{snapshot['window_total']:,}")
-        kpis[2].metric("Events in last 5 min", f"{events_last_five:,}")
-        kpis[3].metric("Average latency · last 5 min", latency_label)
-        kpis[4].metric("MongoDB", "Connected")
+        st.markdown("### Pipeline status")
+        status_cards = st.columns(3, gap="medium")
+        with status_cards[0].container(border=True):
+            st.metric("REDPANDA · BROKER", broker_status)
+            st.caption(broker_endpoint)
+        with status_cards[1].container(border=True):
+            st.metric("SPARK · STREAM OUTPUT", spark_status)
+            st.caption(output_detail)
+        with status_cards[2].container(border=True):
+            st.metric("MONGODB · STORAGE", "Connected")
+            st.caption(f"{snapshot['window_total']:,} saved window summaries · {snapshot['alert_total']:,} alerts")
+        kpis = st.columns(4, gap="medium")
+        with kpis[0].container(border=True):
+            st.metric("Alerts stored", f"{snapshot['alert_total']:,}", help="Total alerts saved by the demo pipeline.")
+        with kpis[1].container(border=True):
+            st.metric("Window summaries", f"{snapshot['window_total']:,}", help="Metric windows saved in MongoDB.")
+        with kpis[2].container(border=True):
+            st.metric("Events · last 5 min", f"{events_last_five:,}", help="Generated events in recent one-minute windows.")
+        with kpis[3].container(border=True):
+            st.metric("Mean latency · last 5 min", latency_label, help="Weighted from generated app-action events; not this dashboard's response time.")
 
-        st.subheader("What the stream is measuring")
+        st.subheader("Pipeline activity")
+        st.caption("Charts use the selected saved-data window. Hover over a line or bar for exact values.")
         if metrics.empty:
             st.info("No metric windows are available in this time range. Start the streaming demo to publish synthetic events.")
         else:
-            st.markdown("#### 1. Events per minute by SPHEREx band")
             count_rows = metrics[metrics["metric_name"] == "events_per_region_band_1m"].copy()
+            latency_rows = metrics[metrics["metric_name"] == "usage_latency_errors_5m"].copy()
+            left_chart, right_chart = st.columns(2, gap="large")
+
             if not count_rows.empty and {"window_start", "band_id", "event_count"}.issubset(count_rows.columns):
                 chart_data = (
                     count_rows.dropna(subset=["window_start", "band_id"])
@@ -152,20 +212,27 @@ def live_panel(range_label: str, auto_refresh: bool) -> None:
                     .sum()
                     .sort_values("window_start")
                 )
-                st.line_chart(
-                    chart_data,
-                    x="window_start",
-                    y="event_count",
-                    color="band_id",
-                    x_label="Window start · India time",
-                    y_label="Events",
+                event_chart = (
+                    alt.Chart(chart_data)
+                    .mark_line(point=alt.OverlayMarkDef(size=42, filled=True), strokeWidth=2.5)
+                    .encode(
+                        x=alt.X("window_start:T", title="Time (IST)", axis=alt.Axis(format="%H:%M")),
+                        y=alt.Y("event_count:Q", title="Events per minute", scale=alt.Scale(zero=True)),
+                        color=alt.Color("band_id:N", title="SPHEREx band", scale=alt.Scale(scheme="tableau10")),
+                        tooltip=[alt.Tooltip("window_start:T", title="Time", format="%d %b %H:%M"), "band_id:N", alt.Tooltip("event_count:Q", title="Events", format=",")],
+                    )
+                    .properties(height=285)
+                    .interactive()
                 )
-                st.caption("Each line is a band; counts are combined across sky regions in one-minute windows.")
+                with left_chart.container(border=True):
+                    st.markdown("#### Events by spectral band")
+                    st.caption("One-minute generated event counts, combined across sky regions.")
+                    st.altair_chart(event_chart, width="stretch")
             else:
-                st.info("No event-count windows are available in this time range.")
+                with left_chart.container(border=True):
+                    st.markdown("#### Events by spectral band")
+                    st.info("No event-count windows are available in this time range.")
 
-            st.markdown("#### 2. Average and p95 request latency")
-            latency_rows = metrics[metrics["metric_name"] == "usage_latency_errors_5m"].copy()
             required_latency = {"window_start", "request_count", "average_latency_ms"}
             if not latency_rows.empty and required_latency.issubset(latency_rows.columns):
                 latency_rows = latency_rows.dropna(subset=["window_start", "request_count", "average_latency_ms"])
@@ -181,21 +248,33 @@ def live_panel(range_label: str, auto_refresh: bool) -> None:
                 latency_series = ["weighted_average_ms"]
                 if "max_region_p95_ms" in latency_chart:
                     latency_series.append("max_region_p95_ms")
-                st.line_chart(
-                    latency_chart.sort_values("window_start"),
-                    x="window_start",
-                    y=latency_series,
-                    x_label="Window start · India time",
-                    y_label="Milliseconds",
+                latency_long = latency_chart.melt(
+                    id_vars="window_start", value_vars=latency_series, var_name="measure", value_name="latency_ms"
                 )
-                if "max_region_p95_ms" in latency_chart:
-                    st.caption("Average is weighted by request count across regions; p95 line is the maximum regional p95.")
-                else:
-                    st.caption("Average is weighted by request count across regions; p95 was not present in this data.")
+                latency_long["measure"] = latency_long["measure"].map(
+                    {"weighted_average_ms": "Weighted average", "max_region_p95_ms": "Highest regional p95"}
+                )
+                latency_viz = (
+                    alt.Chart(latency_long)
+                    .mark_line(point=alt.OverlayMarkDef(size=42, filled=True), strokeWidth=2.5)
+                    .encode(
+                        x=alt.X("window_start:T", title="Time (IST)", axis=alt.Axis(format="%H:%M")),
+                        y=alt.Y("latency_ms:Q", title="Latency (ms)"),
+                        color=alt.Color("measure:N", title="Measure", scale=alt.Scale(range=["#58a6ff", "#c084fc"])),
+                        tooltip=[alt.Tooltip("window_start:T", title="Time", format="%d %b %H:%M"), "measure:N", alt.Tooltip("latency_ms:Q", title="Milliseconds", format=".0f")],
+                    )
+                    .properties(height=285)
+                    .interactive()
+                )
+                with right_chart.container(border=True):
+                    st.markdown("#### Request latency")
+                    st.caption("Weighted average and, when present, the highest regional p95. Synthetic app activity.")
+                    st.altair_chart(latency_viz, width="stretch")
             else:
-                st.info("No usage latency windows are available in this time range.")
+                with right_chart.container(border=True):
+                    st.markdown("#### Request latency")
+                    st.info("No usage latency windows are available in this time range.")
 
-            st.markdown("#### 3. HTTP error rate")
             error_rows = metrics[metrics["metric_name"] == "usage_latency_errors_5m"].copy()
             if not error_rows.empty and {"window_start", "request_count", "error_count"}.issubset(error_rows.columns):
                 error_rows = error_rows.dropna(subset=["window_start", "request_count", "error_count"])
@@ -203,49 +282,92 @@ def live_panel(range_label: str, auto_refresh: bool) -> None:
                     errors=("error_count", "sum"), requests=("request_count", "sum")
                 )
                 error_chart["error_rate_percent"] = 100 * error_chart["errors"] / error_chart["requests"].clip(lower=1)
-                st.line_chart(
-                    error_chart.sort_values("window_start"),
-                    x="window_start",
-                    y="error_rate_percent",
-                    x_label="Window start · India time",
-                    y_label="HTTP errors (%)",
+                error_viz = (
+                    alt.Chart(error_chart)
+                    .mark_area(line={"color": "#fb7185", "strokeWidth": 2}, color="#fb7185", opacity=0.16)
+                    .encode(
+                        x=alt.X("window_start:T", title="Time (IST)", axis=alt.Axis(format="%H:%M")),
+                        y=alt.Y("error_rate_percent:Q", title="Requests with errors (%)", scale=alt.Scale(domainMin=0)),
+                        tooltip=[alt.Tooltip("window_start:T", title="Time", format="%d %b %H:%M"), alt.Tooltip("error_rate_percent:Q", title="Error rate", format=".2f"), alt.Tooltip("errors:Q", title="Errors", format=","), alt.Tooltip("requests:Q", title="Requests", format=",")],
+                    )
+                    .properties(height=250)
+                    .interactive()
                 )
-                st.caption("An error is a synthetic app event with an HTTP status of 400 or higher.")
-            else:
-                st.info("This metric has no HTTP error counts to chart.")
+            alert_left, alert_right = st.columns(2, gap="large")
+            with alert_left.container(border=True):
+                st.markdown("#### HTTP error rate")
+                if not error_rows.empty and {"window_start", "request_count", "error_count"}.issubset(error_rows.columns):
+                    st.altair_chart(error_viz, width="stretch")
+                    st.caption("Share of generated app actions returning HTTP 400 or higher.")
+                else:
+                    st.info("No HTTP error counts are available in this time range.")
 
-            left, right = st.columns(2)
-            with left:
-                st.markdown("#### 4. Alerts by reason")
+            with alert_right.container(border=True):
+                st.markdown("#### Alerts by reason")
                 if not alerts.empty and "alert_reason" in alerts:
                     reason_counts = alerts["alert_reason"].fillna("unknown").value_counts().rename_axis("alert_reason").reset_index(name="alerts")
-                    st.bar_chart(reason_counts, x="alert_reason", y="alerts", horizontal=True)
+                    reasons_viz = (
+                        alt.Chart(reason_counts)
+                        .mark_bar(cornerRadiusEnd=5, color="#a78bfa")
+                        .encode(
+                            y=alt.Y("alert_reason:N", sort="-x", title=None),
+                            x=alt.X("alerts:Q", title="Saved alerts", scale=alt.Scale(zero=True)),
+                            tooltip=["alert_reason:N", alt.Tooltip("alerts:Q", title="Alerts", format=",")],
+                        )
+                        .properties(height=250)
+                    )
+                    st.altair_chart(reasons_viz, width="stretch")
                 else:
                     st.info("No alerts in this time range.")
-            with right:
-                st.markdown("#### 5. Alerts over time")
+
+            region_left, region_right = st.columns(2, gap="large")
+            with region_left.container(border=True):
+                st.markdown("#### Alerts over time")
                 if not alerts.empty and "created_at" in alerts:
                     alert_times = alerts.dropna(subset=["created_at"]).copy()
                     if not alert_times.empty:
                         alert_times["minute"] = alert_times["created_at"].dt.floor("min")
                         per_minute = alert_times.groupby("minute").size().rename("alerts").reset_index()
-                        st.line_chart(per_minute.sort_values("minute"), x="minute", y="alerts", x_label="Minute · India time")
+                        alerts_viz = (
+                            alt.Chart(per_minute.sort_values("minute"))
+                            .mark_line(point=True, strokeWidth=2.5, color="#fbbf24")
+                            .encode(
+                                x=alt.X("minute:T", title="Time (IST)", axis=alt.Axis(format="%H:%M")),
+                                y=alt.Y("alerts:Q", title="Alerts", scale=alt.Scale(zero=True)),
+                                tooltip=[alt.Tooltip("minute:T", title="Time", format="%d %b %H:%M"), alt.Tooltip("alerts:Q", title="Alerts", format=",")],
+                            )
+                            .properties(height=250)
+                            .interactive()
+                        )
+                        st.altair_chart(alerts_viz, width="stretch")
                     else:
                         st.info("Alerts have no timestamps to chart.")
                 else:
                     st.info("No alert timestamps are available in this time range.")
 
-            st.markdown("#### 6. Busiest sky regions")
-            if not count_rows.empty and {"region_key", "event_count"}.issubset(count_rows.columns):
-                busy = (
-                    count_rows.groupby("region_key", as_index=False)["event_count"]
-                    .sum()
-                    .nlargest(10, "event_count")
-                    .sort_values("event_count")
-                )
-                st.bar_chart(busy, x="event_count", y="region_key", horizontal=True, x_label="Events in selected range")
-            else:
-                st.info("No region event counts are available in this time range.")
+            with region_right.container(border=True):
+                st.markdown("#### Busiest sky regions")
+                if not count_rows.empty and {"region_key", "event_count"}.issubset(count_rows.columns):
+                    busy = (
+                        count_rows.groupby("region_key", as_index=False)["event_count"]
+                        .sum()
+                        .nlargest(10, "event_count")
+                        .sort_values("event_count")
+                    )
+                    regions_viz = (
+                        alt.Chart(busy)
+                        .mark_bar(cornerRadiusEnd=5, color="#38bdf8")
+                        .encode(
+                            y=alt.Y("region_key:N", sort="-x", title=None),
+                            x=alt.X("event_count:Q", title="Events in selected range", scale=alt.Scale(zero=True)),
+                            tooltip=["region_key:N", alt.Tooltip("event_count:Q", title="Events", format=",")],
+                        )
+                        .properties(height=250)
+                    )
+                    st.altair_chart(regions_viz, width="stretch")
+                    st.caption("Approximate RA/Dec grid cells, not named astronomical regions.")
+                else:
+                    st.info("No region event counts are available in this time range.")
 
             with st.expander("Show the two streaming summary tables"):
                 count_tab, usage_tab = st.tabs(["Events per region and band", "Usage latency and errors"])
@@ -268,12 +390,16 @@ def live_panel(range_label: str, auto_refresh: bool) -> None:
             else:
                 st.dataframe(without_empty_columns(alerts.head(200)), width="stretch", hide_index=True)
     except Exception as exc:
-        st.error(f"Cannot read live MongoDB results ({type(exc).__name__}). Check the local .env and Atlas access list.")
+        st.error(f"Cannot read the live stream store ({type(exc).__name__}).")
+        st.caption("Check that MONGODB_URI in the repository-root .env points to a reachable local MongoDB or Atlas cluster.")
 
 
 with st.sidebar:
     st.header("Dashboard controls")
-    selected_range = st.selectbox("Show recent data", list(TIME_RANGES), index=1)
+    selected_range = st.selectbox("Show recent data", list(TIME_RANGES), index=len(TIME_RANGES) - 1)
     refresh_enabled = st.toggle("Auto-refresh every 5 seconds", value=True)
 
 live_panel(selected_range, refresh_enabled)
+
+
+

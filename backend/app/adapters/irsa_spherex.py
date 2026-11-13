@@ -14,12 +14,14 @@ from app.utils.errors import (
     ArchiveResponseError,
 )
 
+DEFAULT_COLLECTION = "spherex_qr3"
+
 
 def search_observations(
     ra: float,
     dec: float,
     radius_deg: float,
-    collection: str = "spherex_qr2",
+    collection: str = DEFAULT_COLLECTION,
 ) -> Table:
     """
     Query NASA IRSA for SPHEREx observations.

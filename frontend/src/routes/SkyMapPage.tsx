@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertCircle, ArrowUpRight, Check, CircleDot, Globe2, Layers, Loader2, Maximize2, Minimize2, Orbit, Rotate3D, RotateCcw, Satellite, Search, Shapes, Sparkles, Star, X } from 'lucide-react';
+import { AlertCircle, ArrowLeft, ArrowUpRight, CircleDot, Globe2, Layers, Loader2, Maximize2, Minimize2, Orbit, RotateCcw, Search, Shapes, Sparkles, Star, X } from 'lucide-react';
 import SkyMapGlobe from '../components/SkyMapGlobe';
-import SolarSystemExplorer from '../components/SolarSystemExplorer';
 import { getFeaturedTargets, searchObservations } from '../api/observations';
-import { fetchJson } from '../api/client';
-import type { FeaturedTarget } from '../types/observation';
+import { fetchJson, observationPreviewUrl } from '../api/client';
+import type { FeaturedTarget, Observation } from '../types/observation';
+import ObservationViewer from '../components/ObservationViewer';
 
 type Filter = 'all' | 'nebulae' | 'galaxies' | 'stars' | 'planets' | 'other';
 const CUSTOM_TARGETS_KEY = 'cosmic-eye-skymap-custom-targets';
+const HIPPARCOS_STAR_COUNT = 4992;
 const CONFIRMED_PLANET_SYSTEMS = new Set(['toi700', 'trappist1']);
 const FILTER_OPTIONS: { value: Filter; label: string; Icon: typeof Layers }[] = [
   { value: 'all', label: 'All', Icon: Layers },
@@ -42,11 +43,12 @@ export default function SkyMapPage() {
   const [targets, setTargets] = useState<FeaturedTarget[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>('all');
-  const [mapMode, setMapMode] = useState<'sky' | 'solar-system'>('sky');
   const [resetSignal, setResetSignal] = useState(0);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showGrid, setShowGrid] = useState(false);
   const [showConstellations, setShowConstellations] = useState(true);
+  const [showStarNames, setShowStarNames] = useState(true);
+  const [showTargetPanel, setShowTargetPanel] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [targetQuery, setTargetQuery] = useState('');
   const [listQuery, setListQuery] = useState('');
@@ -54,6 +56,11 @@ export default function SkyMapPage() {
   const [addMessage, setAddMessage] = useState<{ kind: 'success' | 'error'; text: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [archivePreview, setArchivePreview] = useState<Observation | null>(null);
+  const [archivePreviewLoading, setArchivePreviewLoading] = useState(false);
+  const [archivePreviewError, setArchivePreviewError] = useState<string | null>(null);
+  const [archivePreviewFailed, setArchivePreviewFailed] = useState(false);
+  const [viewingObservation, setViewingObservation] = useState<Observation | null>(null);
 
   useEffect(() => {
     const syncFullscreen = () => setIsFullscreen(document.fullscreenElement === pageRef.current);
@@ -82,6 +89,26 @@ export default function SkyMapPage() {
   const selectedTarget = targets.find((target) => target.id === selectedId) ?? null;
   const hoveredTarget = targets.find((target) => target.id === hoveredId) ?? null;
   const searchedTargets = useMemo(() => visibleTargets.filter((target) => `${target.name} ${target.type}`.toLowerCase().includes(listQuery.trim().toLowerCase())), [visibleTargets, listQuery]);
+
+  useEffect(() => {
+    if (!selectedTarget) return;
+    let cancelled = false;
+    setArchivePreview(null);
+    setArchivePreviewFailed(false);
+    setArchivePreviewError(null);
+    setArchivePreviewLoading(true);
+    searchObservations(selectedTarget.ra, selectedTarget.dec, 0.1, 1, 1)
+      .then((data) => {
+        if (cancelled) return;
+        setArchivePreview(data.items[0] ?? null);
+        if (data.items.length === 0) setArchivePreviewError('No released SPHEREx QR3 image tile covers this position yet.');
+      })
+      .catch((reason: unknown) => {
+        if (!cancelled) setArchivePreviewError(reason instanceof Error ? reason.message : 'Could not load a SPHEREx image for this position.');
+      })
+      .finally(() => { if (!cancelled) setArchivePreviewLoading(false); });
+    return () => { cancelled = true; };
+  }, [selectedTarget?.id]);
 
   const setFilterAndSelection = (nextFilter: Filter) => {
     setFilter(nextFilter);
@@ -154,63 +181,47 @@ export default function SkyMapPage() {
   };
 
   return (
-    <div className={`dashboard-wrapper skymap-page${mapMode === 'solar-system' ? ' solar-system-page' : ''}`}>
-      <section ref={pageRef} className={`skymap-content${mapMode === 'solar-system' ? ' is-solar-mode' : ''}${isFullscreen ? ' is-fullscreen' : ''}${isFullscreen && mapMode === 'solar-system' ? ' is-solar-fullscreen' : ''}`}>
-        {mapMode === 'sky' && <>
+    <div className="dashboard-wrapper skymap-page">
+      <section ref={pageRef} className={`skymap-content${isFullscreen ? ' is-fullscreen' : ''}`}>
         <header className="skymap-heading">
           <div>
-            <span className="eyebrow">SPHEREx · FULL SKY</span>
-            <h1>Interactive Sky Map</h1>
-            <p>Look around the sky from SPHEREx. Browse the Messier catalog and open any target with confirmed infrared image coverage.</p>
+            <span className="eyebrow">COSMIC EYE · REAL SKY COORDINATES</span>
+            <h1>Explore the night sky</h1>
+            <p>{HIPPARCOS_STAR_COUNT.toLocaleString()} Hipparcos stars · {targets.length} SPHEREx targets · Drag to rotate, scroll to zoom</p>
           </div>
-          <div className="skymap-target-count"><Globe2 size={18} /><strong>{targets.length || '—'}</strong><span>mapped targets</span></div>
+          <button type="button" className="skymap-exit-button" onClick={() => navigate('/')}><ArrowLeft size={15} /> Exit sky map</button>
         </header>
-
-        </>}
-
-        <div className="skymap-mode-tabs" role="tablist" aria-label="Choose a sky map">
-          <button type="button" role="tab" aria-selected={mapMode === 'sky'} className={mapMode === 'sky' ? 'active' : ''} onClick={() => setMapMode('sky')}><Globe2 size={16} /> All-sky map <span>Deep-space targets</span></button>
-          <button type="button" role="tab" aria-selected={mapMode === 'solar-system'} className={mapMode === 'solar-system' ? 'active' : ''} onClick={() => setMapMode('solar-system')}><Orbit size={16} /> Solar System <span>Planets · moons · asteroids</span></button>
-        </div>
-
-        {mapMode === 'sky' ? <div className="skymap-layout">
+        <div className={`skymap-layout${showTargetPanel ? ' has-target-panel' : ''}`}>
           <div className="skymap-viewer-card">
             <div className="skymap-toolbar">
-              <span className="skymap-gesture-help"><Rotate3D size={16} /> Drag to look around · Scroll to zoom · Select a target</span>
               <div className="skymap-map-actions">
-                <button type="button" className={showGrid ? 'skymap-map-action active' : 'skymap-map-action'} onClick={() => setShowGrid((visible) => !visible)} title="Toggle the RA/Dec coordinate grid">{showGrid ? <Check size={14} /> : <Globe2 size={14} />}Grid</button>
-                <button type="button" className={showConstellations ? 'skymap-map-action active' : 'skymap-map-action'} onClick={() => setShowConstellations((visible) => !visible)} title="Toggle familiar constellation outlines">{showConstellations ? <Check size={14} /> : <Sparkles size={14} />}Constellations</button>
-                <button type="button" className="skymap-map-action" onClick={() => setResetSignal((value) => value + 1)} title="Reset globe orientation and zoom"><RotateCcw size={14} /> Reset</button>
-                <button type="button" className="skymap-map-action" onClick={() => void toggleFullscreen()} aria-pressed={isFullscreen} title={isFullscreen ? 'Exit full-screen sky map' : 'Explore the sky map full screen'}>{isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}{isFullscreen ? 'Exit' : 'Full screen'}</button>
+                <button type="button" className={showGrid ? 'skymap-map-action active' : 'skymap-map-action'} onClick={() => setShowGrid((visible) => !visible)} title="Toggle the RA/Dec coordinate grid" aria-label="Toggle coordinate grid"><Globe2 size={16} /></button>
+                <button type="button" className={showConstellations ? 'skymap-map-action active' : 'skymap-map-action'} onClick={() => setShowConstellations((visible) => !visible)} title="Toggle familiar constellation outlines" aria-label="Toggle constellations"><Sparkles size={16} /></button>
+                <button type="button" className={showStarNames ? 'skymap-map-action active' : 'skymap-map-action'} onClick={() => setShowStarNames((visible) => !visible)} title="Toggle labels for bright named stars" aria-label="Toggle star names"><Star size={16} /></button>
+                <button type="button" className="skymap-map-action" onClick={() => setResetSignal((value) => value + 1)} title="Reset sky orientation and zoom" aria-label="Reset sky view"><RotateCcw size={16} /></button>
+                <button type="button" className={showTargetPanel ? 'skymap-map-action active' : 'skymap-map-action'} onClick={() => setShowTargetPanel((visible) => !visible)} aria-expanded={showTargetPanel} aria-controls="skymap-target-panel" title={showTargetPanel ? 'Hide target panel' : 'Show target panel'} aria-label={showTargetPanel ? 'Hide target panel' : 'Show target panel'}><Layers size={16} /></button>
+                <button type="button" className="skymap-map-action" onClick={() => void toggleFullscreen()} aria-pressed={isFullscreen} title={isFullscreen ? 'Exit full-screen sky map' : 'Explore the sky map full screen'} aria-label={isFullscreen ? 'Exit full screen' : 'Enter full screen'}>{isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}</button>
                 <span className="skymap-coordinate-system">ICRS / J2000</span>
               </div>
             </div>
             <div className="skymap-globe-wrap">
-              {!loading && !error && <SkyMapGlobe targets={visibleTargets} selectedId={selectedId} onSelect={selectTarget} resetSignal={resetSignal} showGrid={showGrid} showConstellations={showConstellations} focusedTarget={selectedTarget ? { ra: selectedTarget.ra, dec: selectedTarget.dec } : null} onHover={setHoveredId} />}
+              {!loading && !error && <SkyMapGlobe targets={visibleTargets} selectedId={selectedId} onSelect={selectTarget} resetSignal={resetSignal} showGrid={showGrid} showConstellations={showConstellations} showStarNames={showStarNames} focusedTarget={selectedTarget ? { ra: selectedTarget.ra, dec: selectedTarget.dec } : null} onHover={setHoveredId} />}
               {loading && <div className="skymap-loading"><Loader2 size={24} className="spin" /> Loading observed targets…</div>}
               {error && <div className="skymap-error"><AlertCircle size={20} />{error}</div>}
-              {!loading && !error && <>
-                <div className="skymap-observer-label"><span className="skymap-spacecraft-icon"><Satellite size={17} /></span><span><strong>SPHEREx</strong><small>Observer · viewpoint at center</small></span></div>
-              </>}
               {hoveredTarget && <div className="skymap-hover-card"><span>TARGET IN VIEW</span><strong>{hoveredTarget.name}</strong><small>RA {hoveredTarget.ra.toFixed(2)}° · Dec {hoveredTarget.dec.toFixed(2)}°</small></div>}
             </div>
             <div className="skymap-legend">
-              <span><i className="legend-dot guide-star" /> Hipparcos guide stars</span>
-              <span><i className="legend-dot bright-star" /> Bright Hipparcos stars</span>
-              <span><i className="legend-milky-way" /> Milky Way plane</span>
-              <span><i className="legend-constellation-line" /> Constellation lines</span>
-              <span><Sparkles className="legend-category-icon nebula" size={14} /> Nebulae</span>
-              <span><Orbit className="legend-category-icon galaxy" size={14} /> Galaxies</span>
-              <span><Star className="legend-category-icon star" size={14} /> Stars &amp; clusters</span>
-              <span><CircleDot className="legend-category-icon planet" size={14} /> Confirmed exoplanet systems</span>
-              <span><Shapes className="legend-category-icon other" size={14} /> Other covered objects</span>
+              <span><i className="legend-dot guide-star" /> Hipparcos catalog stars</span>
+              <span><Sparkles className="legend-category-icon nebula" size={14} /> SPHEREx targets</span>
+              <span><i className="legend-constellation-line" /> Constellation outlines</span>
+              <span><i className="legend-milky-way" /> Milky Way guide band</span>
             </div>
-            <p className="skymap-science-note">You are viewing the sky from the SPHEREx observer point. The lavender star band follows the Milky Way’s galactic plane; its points are illustrative, not SPHEREx pixels. Gold lines connect bright Hipparcos stars into familiar constellation outlines. Colored target markers have SPHEREx image coverage. RA/Dec gives direction only, not object distance or size.</p>
+            <p className="skymap-science-note">Catalog stars and SPHEREx targets are plotted at their catalog ICRS coordinates. The Milky Way band is an illustrative guide, not SPHEREx image data.</p>
           </div>
 
-          <aside className="skymap-target-panel">
+          {showTargetPanel && <aside id="skymap-target-panel" className="skymap-target-panel">
             <div className="skymap-panel-heading">
-              <div><h2>SPHEREx targets</h2><p>Messier catalog + covered sky regions</p></div>
+              <div><h2>SPHEREx targets</h2><p>Catalog targets · live QR3 coverage check</p></div>
               <span>{visibleTargets.length}</span>
             </div>
 
@@ -234,7 +245,7 @@ export default function SkyMapPage() {
               <div className="skymap-suggestions" aria-label="Example targets">
                 {['NGC 7000', 'Sirius', 'TOI-700', 'TRAPPIST-1'].map((name) => <button key={name} type="button" onClick={() => setTargetQuery(name)}>{name}</button>)}
               </div>
-              <small>Suggestions are looked up with SIMBAD and added only if SPHEREx archive coverage is found. Planetary systems are plotted at their host-star position.</small>
+              <small>Names are resolved with the local catalog or SIMBAD, then checked against the current SPHEREx QR3 archive. Planetary systems are plotted at their host-star position.</small>
             </form>
 
             <div className="skymap-local-search"><Search size={14} /><input aria-label="Filter mapped targets" value={listQuery} onChange={(event) => setListQuery(event.target.value)} placeholder="Filter mapped targets…" /></div>
@@ -244,7 +255,7 @@ export default function SkyMapPage() {
                 <button key={target.id} type="button" className={selectedId === target.id ? 'skymap-target active' : 'skymap-target'} onClick={() => selectTarget(target.id)}>
                   <span className={`skymap-target-marker ${objectKind(target.type)}`} />
                   <span className="skymap-target-name"><strong>{target.name}</strong><small>{target.type}</small></span>
-                  <span className="skymap-target-check" aria-label="SPHEREx archive coverage">✓</span>
+                  <span className="skymap-target-check" aria-label="Catalog target">IR</span>
                 </button>
               ))}
             </div>
@@ -258,14 +269,26 @@ export default function SkyMapPage() {
                   <div><dt>Right ascension</dt><dd>{selectedTarget.ra.toFixed(3)}°</dd></div>
                   <div><dt>Declination</dt><dd>{selectedTarget.dec.toFixed(3)}°</dd></div>
                 </dl>
-                <button type="button" className="glow-btn skymap-explore-button" onClick={() => navigate('/explore', { state: { ra: selectedTarget.ra.toString(), dec: selectedTarget.dec.toString(), targetName: selectedTarget.name } })}>
+                <div className="skymap-archive-preview">
+                  <div className="skymap-archive-preview-heading"><strong>SPHEREx infrared image</strong><span>IRSA · QR3</span></div>
+                  {archivePreviewLoading && <div className="skymap-archive-preview-state"><Loader2 size={16} className="spin" /> Searching current archive…</div>}
+                  {!archivePreviewLoading && archivePreview && (
+                    <button type="button" className="skymap-archive-image-button" onClick={() => setViewingObservation(archivePreview)}>
+                      {!archivePreviewFailed ? <img src={observationPreviewUrl(archivePreview.source_url)} alt={`SPHEREx ${archivePreview.band} image tile near ${selectedTarget.name}`} onLoad={() => setArchivePreviewFailed(false)} onError={() => setArchivePreviewFailed(true)} /> : <span className="skymap-archive-preview-state">Image preview failed. Open the archive result for details.</span>}
+                      <span>{archivePreview.id} · {archivePreview.band} · Click to zoom</span>
+                    </button>
+                  )}
+                  {!archivePreviewLoading && !archivePreview && archivePreviewError && <p className="skymap-archive-preview-state">{archivePreviewError}</p>}
+                </div>
+                <button type="button" className="glow-btn skymap-explore-button" onClick={() => navigate('/explore', { state: { ra: selectedTarget.ra.toString(), dec: selectedTarget.dec.toString(), targetName: selectedTarget.name, radius: 0.1 } })}>
                   Open SPHEREx images <ArrowUpRight size={16} />
                 </button>
               </div>
             )}
-          </aside>
-        </div> : <SolarSystemExplorer onMapMode={setMapMode} />}
+          </aside>}
+        </div>
       </section>
+      {viewingObservation && <ObservationViewer observation={viewingObservation} onClose={() => setViewingObservation(null)} />}
     </div>
   );
 }

@@ -11,13 +11,15 @@ deleted when a run exits. Stopping the broker also removes its temporary
 container storage.
 
 With `--source irsa`, a bounded query to IRSA's SIA2 endpoint fetches at most 100
-SPHEREx QR2 metadata rows for a small sky cone. It reads metadata only; it never
+SPHEREx QR3 metadata rows for a small sky cone. It reads metadata only; it never
 downloads image/FITS products. Exposure event quality metrics and app-usage
 events are synthetic. Each exposure sets `is_synthetic=true` because the full
 record includes generated metrics, while separately setting
 `metadata_is_synthetic=false` and recording NASA/IPAC IRSA, access time, and
 which fields are synthetic. `--source synthetic` labels even the observation
 metadata as synthetic.
+
+The captured pilot measurements below predate the QR3 switch and remain historical. IRSA retired QR2 from SIA searches; current ingestion uses QR3.
 
 The generator deliberately injects duplicate event IDs, null values,
 out-of-range values, wrong metric types, wrong event-envelope types (sent to the

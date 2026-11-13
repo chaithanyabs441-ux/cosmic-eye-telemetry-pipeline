@@ -25,7 +25,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(ROOT, ".env"))
 
 SIA_URL = "https://irsa.ipac.caltech.edu/SIA"
-SIA_COLLECTION = "spherex_qr2"
+SIA_COLLECTION = "spherex_qr3"
 REGION_RA_STEP = 10
 REGION_DEC_STEP = 10
 
@@ -102,7 +102,7 @@ def metadata_record(row: dict[str, Any], accessed_at: str, index: int) -> dict[s
         "obs_collection": field(row, "obs_collection", "collection") or SIA_COLLECTION,
         "band_name": str(band_name),
         "metadata_is_synthetic": False,
-        "source": "NASA/IPAC IRSA SIA2 SPHEREx QR2",
+        "source": "NASA/IPAC IRSA SIA2 SPHEREx QR3",
         "source_accessed_at": accessed_at,
     }
 

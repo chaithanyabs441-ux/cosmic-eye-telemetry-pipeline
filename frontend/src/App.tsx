@@ -5,7 +5,6 @@ import Sidebar from './components/Sidebar';
 import HomePage from './routes/HomePage';
 import ExplorePage from './routes/ExplorePage';
 import LearnPage from './routes/LearnPage';
-import AISearchPage from './routes/AISearchPage';
 import BrowsePage from './routes/BrowsePage';
 import RGBExplorerPage from './routes/RGBExplorerPage'; // <-- IMPORTED
 
@@ -35,7 +34,7 @@ export default function App() {
             <Route path="/wavelengths" element={<Navigate to="/rgb" replace />} />
             <Route path="/rgb" element={<RGBExplorerPage />} /> {/* <-- NEW ROUTE */}
             <Route path="/learn" element={<LearnPage />} />
-            <Route path="/ai-search" element={<AISearchPage />} />
+            <Route path="/ai-search" element={<Navigate to="/explore" replace />} />
             <Route path="/browse" element={<BrowsePage mode="recent" />} />
             <Route path="/popular-regions" element={<BrowsePage mode="regions" />} />
             <Route path="/skymap" element={<Suspense fallback={<div className="dashboard-wrapper">Loading 3D sky map…</div>}><SkyMapPage /></Suspense>} />

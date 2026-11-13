@@ -1,5 +1,12 @@
 # Data Provenance — Stage 0
 
+## Current archive note (2026-11-13)
+
+The Stage 0 record below is a historical QR2 product. IRSA has retired QR2 from
+SIA searches; the interactive app and current ingestion code now query the
+SPHEREx QR3 collection. New image availability is checked against QR3 at query
+time.
+
 ## Verified observation (2026-xx-xx)
 
 - **obs_id:** `2025W43_1A_0516_1`

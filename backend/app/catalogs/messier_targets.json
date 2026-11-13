@@ -5,11 +5,11 @@
     "type": "Globular cluster",
     "ra": 323.36258333,
     "dec": -0.82325,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-3",
@@ -17,11 +17,11 @@
     "type": "Globular cluster",
     "ra": 205.54841667,
     "dec": 28.37727778,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-4",
@@ -29,11 +29,11 @@
     "type": "Globular cluster",
     "ra": 245.89675,
     "dec": -26.52575,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-5",
@@ -41,11 +41,11 @@
     "type": "Globular cluster",
     "ra": 229.63841667,
     "dec": 2.08102778,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-6",
@@ -53,11 +53,11 @@
     "type": "Open cluster",
     "ra": 265.06916667,
     "dec": -32.24194444,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-7",
@@ -65,11 +65,11 @@
     "type": "Open cluster",
     "ra": 268.44708333,
     "dec": -34.84111111,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-9",
@@ -77,11 +77,11 @@
     "type": "Globular cluster",
     "ra": 259.79908333,
     "dec": -18.51625,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-10",
@@ -89,11 +89,11 @@
     "type": "Globular cluster",
     "ra": 254.28770833,
     "dec": -4.10030556,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-11",
@@ -101,11 +101,11 @@
     "type": "Open cluster",
     "ra": 282.76583333,
     "dec": -6.27194444,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-12",
@@ -113,11 +113,11 @@
     "type": "Globular cluster",
     "ra": 251.80908333,
     "dec": -1.94852778,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-13",
@@ -125,11 +125,11 @@
     "type": "Globular cluster",
     "ra": 250.423475,
     "dec": 36.46131944,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-14",
@@ -137,11 +137,11 @@
     "type": "Globular cluster",
     "ra": 264.400625,
     "dec": -3.24591667,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-15",
@@ -149,11 +149,11 @@
     "type": "Globular cluster",
     "ra": 322.49304167,
     "dec": 12.167,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-17",
@@ -161,11 +161,11 @@
     "type": "Open cluster",
     "ra": 275.19583333,
     "dec": -16.17166667,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-18",
@@ -173,11 +173,11 @@
     "type": "Open cluster",
     "ra": 274.9875,
     "dec": -17.08833333,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-19",
@@ -185,11 +185,11 @@
     "type": "Globular cluster",
     "ra": 255.65704167,
     "dec": -26.26794444,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-20",
@@ -197,11 +197,11 @@
     "type": "Open cluster",
     "ra": 270.675,
     "dec": -22.97166667,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-21",
@@ -209,11 +209,11 @@
     "type": "Open cluster",
     "ra": 271.03583333,
     "dec": -22.505,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-22",
@@ -221,11 +221,11 @@
     "type": "Globular cluster",
     "ra": 279.09975,
     "dec": -23.90475,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-23",
@@ -233,11 +233,11 @@
     "type": "Open cluster",
     "ra": 269.23708333,
     "dec": -18.98694444,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-24",
@@ -245,11 +245,11 @@
     "type": "Milky Way star field",
     "ra": 274.2,
     "dec": -18.55,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-25",
@@ -257,11 +257,11 @@
     "type": "Open cluster",
     "ra": 277.93708333,
     "dec": -19.11388889,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-26",
@@ -269,11 +269,11 @@
     "type": "Open cluster",
     "ra": 281.31708333,
     "dec": -9.38611111,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-27",
@@ -281,11 +281,11 @@
     "type": "Planetary nebula",
     "ra": 299.90151292,
     "dec": 22.72119778,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-28",
@@ -293,11 +293,11 @@
     "type": "Globular cluster",
     "ra": 276.13704167,
     "dec": -24.86983333,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-29",
@@ -305,11 +305,11 @@
     "type": "Open cluster",
     "ra": 305.94166667,
     "dec": 38.48666667,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-30",
@@ -317,11 +317,11 @@
     "type": "Globular cluster",
     "ra": 325.09216667,
     "dec": -23.17986111,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-32",
@@ -329,11 +329,11 @@
     "type": "Galaxy group",
     "ra": 10.67427,
     "dec": 40.86517,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-33",
@@ -341,11 +341,11 @@
     "type": "Galaxy group",
     "ra": 23.46206875,
     "dec": 30.660175,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-34",
@@ -353,11 +353,11 @@
     "type": "Open cluster",
     "ra": 40.53083333,
     "dec": 42.72194444,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-35",
@@ -365,11 +365,11 @@
     "type": "Open cluster",
     "ra": 92.27208333,
     "dec": 24.33611111,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-36",
@@ -377,11 +377,11 @@
     "type": "Open cluster",
     "ra": 84.08416667,
     "dec": 34.135,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-37",
@@ -389,11 +389,11 @@
     "type": "Open cluster",
     "ra": 88.07416667,
     "dec": 32.545,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-38",
@@ -401,11 +401,11 @@
     "type": "Open cluster",
     "ra": 82.16708333,
     "dec": 35.82388889,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-39",
@@ -413,11 +413,11 @@
     "type": "Open cluster",
     "ra": 322.88916667,
     "dec": 48.24694444,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-40",
@@ -425,11 +425,11 @@
     "type": "Double star",
     "ra": 185.55,
     "dec": 58.08333333,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-41",
@@ -437,11 +437,11 @@
     "type": "Open cluster",
     "ra": 101.49916667,
     "dec": -20.71611111,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-43",
@@ -449,11 +449,11 @@
     "type": "Star-forming nebula",
     "ra": 83.87916667,
     "dec": -5.27,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-44",
@@ -461,11 +461,11 @@
     "type": "Open cluster",
     "ra": 130.05416667,
     "dec": 19.62111111,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-46",
@@ -473,11 +473,11 @@
     "type": "Open cluster",
     "ra": 115.445,
     "dec": -14.84388889,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-47",
@@ -485,11 +485,11 @@
     "type": "Open cluster",
     "ra": 114.14708333,
     "dec": -14.48888889,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-48",
@@ -497,11 +497,11 @@
     "type": "Open cluster",
     "ra": 123.41208333,
     "dec": -5.72611111,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-49",
@@ -509,11 +509,11 @@
     "type": "Galaxy",
     "ra": 187.445,
     "dec": 8.00027778,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-50",
@@ -521,11 +521,11 @@
     "type": "Open cluster",
     "ra": 105.68416667,
     "dec": -8.365,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-52",
@@ -533,11 +533,11 @@
     "type": "Open cluster",
     "ra": 351.195,
     "dec": 61.59,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-53",
@@ -545,11 +545,11 @@
     "type": "Globular cluster",
     "ra": 198.23020833,
     "dec": 18.16816667,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-54",
@@ -557,11 +557,11 @@
     "type": "Globular cluster",
     "ra": 283.763875,
     "dec": -30.47986111,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-55",
@@ -569,11 +569,11 @@
     "type": "Globular cluster",
     "ra": 294.99879167,
     "dec": -30.96475,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-56",
@@ -581,11 +581,11 @@
     "type": "Globular cluster",
     "ra": 289.14820833,
     "dec": 30.18347222,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-58",
@@ -593,11 +593,11 @@
     "type": "Galaxy",
     "ra": 189.43165583,
     "dec": 11.81809,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-59",
@@ -605,11 +605,11 @@
     "type": "Galaxy group",
     "ra": 190.50940875,
     "dec": 11.64691917,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-60",
@@ -617,11 +617,11 @@
     "type": "Galaxy group",
     "ra": 190.916545,
     "dec": 11.55269111,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-61",
@@ -629,11 +629,11 @@
     "type": "Galaxy",
     "ra": 185.4788675,
     "dec": 4.47377694,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-62",
@@ -641,11 +641,11 @@
     "type": "Globular cluster",
     "ra": 255.3025,
     "dec": -30.11236111,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-63",
@@ -653,11 +653,11 @@
     "type": "Galaxy",
     "ra": 198.95530875,
     "dec": 42.02936889,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-64",
@@ -665,11 +665,11 @@
     "type": "Galaxy",
     "ra": 194.18206667,
     "dec": 21.68265833,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-65",
@@ -677,11 +677,11 @@
     "type": "Galaxy pair",
     "ra": 169.73295167,
     "dec": 13.09230556,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-66",
@@ -689,11 +689,11 @@
     "type": "Galaxy",
     "ra": 170.0625,
     "dec": 12.99138889,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-67",
@@ -701,11 +701,11 @@
     "type": "Open cluster",
     "ra": 132.84583333,
     "dec": 11.81388889,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-68",
@@ -713,11 +713,11 @@
     "type": "Globular cluster",
     "ra": 189.86658333,
     "dec": -26.74405556,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-69",
@@ -725,11 +725,11 @@
     "type": "Globular cluster",
     "ra": 277.84625,
     "dec": -32.34808333,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-70",
@@ -737,11 +737,11 @@
     "type": "Globular cluster",
     "ra": 280.80316667,
     "dec": -32.29211111,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-71",
@@ -749,11 +749,11 @@
     "type": "Globular cluster",
     "ra": 298.44370833,
     "dec": 18.77919444,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-72",
@@ -761,11 +761,11 @@
     "type": "Globular cluster",
     "ra": 313.36541667,
     "dec": -12.53730556,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-73",
@@ -773,11 +773,11 @@
     "type": "Asterism",
     "ra": 314.75,
     "dec": -12.63333333,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-74",
@@ -785,11 +785,11 @@
     "type": "Galaxy",
     "ra": 24.17393792,
     "dec": 15.78364083,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-75",
@@ -797,11 +797,11 @@
     "type": "Globular cluster",
     "ra": 301.52017083,
     "dec": -21.92226111,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-76",
@@ -809,11 +809,11 @@
     "type": "Planetary nebula",
     "ra": 25.58189875,
     "dec": 51.57542611,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-77",
@@ -821,11 +821,11 @@
     "type": "Galaxy",
     "ra": 40.66962125,
     "dec": -0.01329417,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-78",
@@ -833,11 +833,11 @@
     "type": "Reflection nebula",
     "ra": 86.69083333,
     "dec": 0.07916667,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-79",
@@ -845,11 +845,11 @@
     "type": "Globular cluster",
     "ra": 81.044125,
     "dec": -24.52425,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-80",
@@ -857,11 +857,11 @@
     "type": "Globular cluster",
     "ra": 244.26004167,
     "dec": -22.97608333,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-81",
@@ -869,11 +869,11 @@
     "type": "Galaxy",
     "ra": 148.88821917,
     "dec": 69.065295,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-82",
@@ -881,11 +881,11 @@
     "type": "Galaxy",
     "ra": 148.96845833,
     "dec": 69.67970278,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-83",
@@ -893,11 +893,11 @@
     "type": "Galaxy",
     "ra": 204.25383,
     "dec": -29.86576111,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-84",
@@ -905,11 +905,11 @@
     "type": "Galaxy",
     "ra": 186.26559708,
     "dec": 12.88698306,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-85",
@@ -917,11 +917,11 @@
     "type": "Galaxy pair",
     "ra": 186.35022083,
     "dec": 18.19108056,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-86",
@@ -929,11 +929,11 @@
     "type": "Galaxy group",
     "ra": 186.549225,
     "dec": 12.94596944,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-87",
@@ -941,11 +941,11 @@
     "type": "Galaxy",
     "ra": 187.70593042,
     "dec": 12.39112306,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-88",
@@ -953,11 +953,11 @@
     "type": "Galaxy",
     "ra": 187.99646875,
     "dec": 14.42031889,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-89",
@@ -965,11 +965,11 @@
     "type": "Galaxy",
     "ra": 188.91586375,
     "dec": 12.55634167,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-90",
@@ -977,11 +977,11 @@
     "type": "Galaxy",
     "ra": 189.20750375,
     "dec": 13.16292306,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-91",
@@ -989,11 +989,11 @@
     "type": "Galaxy",
     "ra": 188.86018583,
     "dec": 14.49632222,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-92",
@@ -1001,11 +1001,11 @@
     "type": "Globular cluster",
     "ra": 259.28079167,
     "dec": 43.13594444,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-93",
@@ -1013,11 +1013,11 @@
     "type": "Open cluster",
     "ra": 116.14083333,
     "dec": -23.85305556,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-94",
@@ -1025,11 +1025,11 @@
     "type": "Galaxy",
     "ra": 192.72114042,
     "dec": 41.12025,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-95",
@@ -1037,11 +1037,11 @@
     "type": "Galaxy pair",
     "ra": 160.99054708,
     "dec": 11.70369472,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-96",
@@ -1049,11 +1049,11 @@
     "type": "Galaxy pair",
     "ra": 161.6906,
     "dec": 11.81993889,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-97",
@@ -1061,11 +1061,11 @@
     "type": "Planetary nebula",
     "ra": 168.69880083,
     "dec": 55.01902278,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-98",
@@ -1073,11 +1073,11 @@
     "type": "Galaxy",
     "ra": 183.4512125,
     "dec": 14.9005425,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-99",
@@ -1085,11 +1085,11 @@
     "type": "Astronomical object",
     "ra": 184.70677083,
     "dec": 14.41648889,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-100",
@@ -1097,11 +1097,11 @@
     "type": "Galaxy",
     "ra": 185.72887458,
     "dec": 15.82230444,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-101",
@@ -1109,11 +1109,11 @@
     "type": "Galaxy pair",
     "ra": 210.80242917,
     "dec": 54.34875,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-102",
@@ -1121,11 +1121,11 @@
     "type": "Galaxy",
     "ra": 226.62317083,
     "dec": 55.76330833,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-103",
@@ -1133,11 +1133,11 @@
     "type": "Open cluster",
     "ra": 23.33916667,
     "dec": 60.65888889,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-104",
@@ -1145,11 +1145,11 @@
     "type": "Galaxy",
     "ra": 189.9976325,
     "dec": -11.62305444,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-105",
@@ -1157,11 +1157,11 @@
     "type": "Galaxy",
     "ra": 161.95666667,
     "dec": 12.58163056,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-106",
@@ -1169,11 +1169,11 @@
     "type": "Galaxy",
     "ra": 184.74008333,
     "dec": 47.30371944,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-107",
@@ -1181,11 +1181,11 @@
     "type": "Globular cluster",
     "ra": 248.13275,
     "dec": -13.05377778,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-108",
@@ -1193,11 +1193,11 @@
     "type": "Galaxy",
     "ra": 167.87902917,
     "dec": 55.67412222,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-109",
@@ -1205,11 +1205,11 @@
     "type": "Galaxy group",
     "ra": 179.39984625,
     "dec": 53.37472389,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   },
   {
     "id": "messier-110",
@@ -1217,10 +1217,10 @@
     "type": "Galaxy group",
     "ra": 10.091905,
     "dec": 41.68541861,
-    "description": "Messier catalog object at its SIMBAD reference position. SPHEREx QR2 Level 2 image coverage verified at these coordinates on 2026-10-18.",
+    "description": "Catalog position. The app checks the current SPHEREx QR3 archive when you select this target.",
     "image_url": "",
     "catalog": "Messier",
-    "coverage_collection": "spherex_qr2",
-    "coverage_verified": "2026-10-18"
+    "historical_coverage_collection": "spherex_qr2",
+    "historical_coverage_verified": "2026-10-18"
   }
 ]

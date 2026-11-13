@@ -6,7 +6,7 @@ import type { Observation } from '../types/observation';
 import ObservationCard from '../components/ObservationCard';
 import ObservationViewer from '../components/ObservationViewer';
 import ColorReferenceImage from '../components/ColorReferenceImage';
-import { Sparkles, Loader2, Palette } from 'lucide-react';
+import { Search, Loader2, Palette } from 'lucide-react';
 import { fetchJson } from '../api/client';
 
 export default function ExplorePage() {
@@ -32,7 +32,7 @@ export default function ExplorePage() {
     if (state.ra != null && state.dec != null) {
       setRa(state.ra); setDec(state.dec);
       if (state.targetName) setQuery(state.targetName);
-      handleSearch(state.ra, state.dec);
+      handleSearch(state.ra, state.dec, state.radius ?? 0.01);
     } else if (state.aiQuery) {
       setQuery(state.aiQuery);
       handleAiSearch(state.aiQuery);
@@ -59,21 +59,24 @@ export default function ExplorePage() {
     if (!searchQuery) return;
     setAiLoading(true); setError(null);
     try {
-      const data = await fetchJson<{ ra: number, dec: number }>(`/api/v1/observations/ai-search?q=${encodeURIComponent(searchQuery)}`);
+      const data = await fetchJson<{ ra: number, dec: number, search_radius?: number }>(`/api/v1/observations/ai-search?q=${encodeURIComponent(searchQuery)}`);
       setRa(data.ra.toString()); setDec(data.dec.toString());
-      await handleSearch(data.ra.toString(), data.dec.toString());
+      await handleSearch(data.ra.toString(), data.dec.toString(), data.search_radius ?? 0.01);
     } catch (err: any) {
-      setError(`Simbad could not find "${searchQuery}". Try a valid astronomical object like "Sirius" or "M31".`);
+      setError(err instanceof Error ? err.message : `Could not resolve "${searchQuery}". Try a catalog name such as M43, M31, or Sirius.`);
     } finally {
       setAiLoading(false);
     }
   };
 
-  const handleSearch = async (searchRa: string, searchDec: string) => {
+  const handleSearch = async (searchRa: string, searchDec: string, radius = 0.01) => {
     setLoading(true); setError(null); setResults([]);
     try {
-      const data = await searchObservations(Number(searchRa), Number(searchDec), 0.01);
+      const data = await searchObservations(Number(searchRa), Number(searchDec), radius);
       setResults(data.items);
+      if (data.items.length === 0) {
+        setError('No released SPHEREx QR3 image tiles cover this position at the selected search radius. Try a larger radius or nearby coordinates.');
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to search the NASA archive.');
     } finally {
@@ -91,8 +94,8 @@ export default function ExplorePage() {
       <section style={{ flex: 1 }}>
         <div className="explore-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <h1>Explore NASA SPHEREx</h1>
-            <p>Search the IRSA archive or ask the global AI database.</p>
+            <h1>Search SPHEREx</h1>
+            <p>Search the SPHEREx archive by object name or sky coordinates.</p>
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
             <button onClick={() => navigate('/rgb', { state: { ra, dec } })} className="secondary-btn" style={{ borderColor: '#c084fc', color: '#c084fc' }}>
@@ -103,18 +106,18 @@ export default function ExplorePage() {
 
         <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
           <div style={{ flex: 1, display: 'flex', background: 'var(--bg-panel)', border: '1px solid var(--accent-blue)', borderRadius: '8px', padding: '4px 16px', alignItems: 'center', boxShadow: '0 0 15px rgba(79, 140, 255, 0.15)' }}>
-            <Sparkles size={18} color="var(--accent-blue)" />
+            <Search size={18} color="var(--accent-blue)" />
             <input 
               ref={inputRef}
               type="text" 
-              placeholder="Search ANY object in the universe (e.g. 'Sirius', 'M31')..." 
+              placeholder="Object name (e.g. M43, Sirius) or search by coordinates below"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAiSearch(query)}
               style={{ flex: 1, background: 'transparent', border: 'none', color: 'white', padding: '12px', fontSize: '1rem', outline: 'none' }}
             />
             <button onClick={() => handleAiSearch(query)} disabled={aiLoading} style={{ background: 'var(--accent-blue)', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>
-              {aiLoading ? <Loader2 size={16} className="spin" /> : 'AI Search'}
+              {aiLoading ? <Loader2 size={16} className="spin" /> : 'Search object'}
             </button>
           </div>
         </div>

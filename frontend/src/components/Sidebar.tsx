@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Home, Search, BookOpen, Sparkles, Calendar, Palette, Star, Globe2 } from 'lucide-react';
+import { Home, Search, BookOpen, Calendar, Palette, Star, Globe2 } from 'lucide-react';
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home, end: true },
   { to: '/skymap', label: 'Sky Map', icon: Globe2 },
-  { to: '/ai-search', label: 'AI Search', icon: Sparkles },
   { to: '/browse', label: 'Browse', icon: Calendar },
   { to: '/popular-regions', label: 'Popular Regions', icon: Star },
-  { to: '/explore', label: 'Manual Search', icon: Search },
+  { to: '/explore', label: 'Search', icon: Search },
   { to: '/rgb', label: 'Color Lab', icon: Palette },
   { to: '/learn', label: 'Learn', icon: BookOpen },
 ];

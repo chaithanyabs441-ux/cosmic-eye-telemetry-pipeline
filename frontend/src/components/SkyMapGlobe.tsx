@@ -10,6 +10,7 @@ type Props = {
   resetSignal: number;
   showGrid: boolean;
   showConstellations: boolean;
+  showStarNames: boolean;
   focusedTarget: { ra: number; dec: number } | null;
   onHover: (id: string | null) => void;
 };
@@ -22,6 +23,13 @@ const CONSTELLATION_PATHS = [
   { name: 'Cassiopeia', paths: [[746, 3179, 4427, 6686, 8886]] },
   { name: 'Cygnus', paths: [[102098, 100453, 9640], [100453, 102488, 97165]] },
   { name: 'Leo', paths: [[49669, 50583, 54879, 54872, 50335, 49669]] },
+];
+const STAR_NAMES: [number, string][] = [
+  [32349, 'Sirius'], [30438, 'Canopus'], [69673, 'Arcturus'], [91262, 'Vega'],
+  [24608, 'Capella'], [24436, 'Rigel'], [37279, 'Procyon'], [7588, 'Achernar'],
+  [27989, 'Betelgeuse'], [68702, 'Hadar'], [97649, 'Altair'], [60718, 'Acrux'],
+  [21421, 'Aldebaran'], [80763, 'Antares'], [65474, 'Spica'], [37826, 'Pollux'],
+  [113368, 'Fomalhaut'], [102098, 'Deneb'], [49669, 'Regulus'], [11767, 'Polaris'],
 ];
 const GALACTIC_TO_EQUATORIAL = new THREE.Matrix3().set(
   -0.0548755604, 0.4941094279, -0.8676661490,
@@ -184,7 +192,23 @@ function createTargetIconTexture(kind: string) {
 }
 
 function addArc(group: THREE.Group, points: THREE.Vector3[], color: number, opacity: number) {
-  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  const arcPoints: THREE.Vector3[] = [];
+  for (let index = 0; index < points.length - 1; index += 1) {
+    const start = points[index];
+    const end = points[index + 1];
+    const startDirection = start.clone().normalize();
+    const endDirection = end.clone().normalize();
+    const angle = startDirection.angleTo(endDirection);
+    const steps = Math.max(1, Math.ceil(angle / THREE.MathUtils.degToRad(2)));
+    for (let step = 0; step < steps; step += 1) {
+      const fraction = step / steps;
+      const direction = startDirection.clone().lerp(endDirection, fraction).normalize();
+      const radius = THREE.MathUtils.lerp(start.length(), end.length(), fraction);
+      arcPoints.push(direction.multiplyScalar(radius));
+    }
+  }
+  arcPoints.push(points[points.length - 1].clone());
+  const geometry = new THREE.BufferGeometry().setFromPoints(arcPoints);
   const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({
     color,
     transparent: true,
@@ -232,7 +256,36 @@ function addConstellationLabel(group: THREE.Group, name: string, positions: THRE
   group.add(label);
 }
 
-export default function SkyMapGlobe({ targets, selectedId, onSelect, resetSignal, showGrid, showConstellations, focusedTarget, onHover }: Props) {
+function addStarNameLabel(group: THREE.Group, position: THREE.Vector3, name: string) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 240;
+  canvas.height = 56;
+  const context = canvas.getContext('2d');
+  if (!context) return;
+  context.font = '600 27px Inter, sans-serif';
+  context.textBaseline = 'middle';
+  context.fillStyle = 'rgba(5, 10, 19, .74)';
+  const textWidth = context.measureText(name).width;
+  context.beginPath();
+  context.roundRect(5, 5, Math.min(230, textWidth + 26), 46, 14);
+  context.fill();
+  context.fillStyle = '#f2f6ff';
+  context.shadowColor = '#000000';
+  context.shadowBlur = 5;
+  context.fillText(name, 17, 29);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  const label = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false, depthWrite: false, sizeAttenuation: true }));
+  const direction = position.clone().normalize();
+  const tangent = new THREE.Vector3(0, 1, 0).cross(direction);
+  if (tangent.lengthSq() < 0.01) tangent.set(1, 0, 0).cross(direction);
+  label.position.copy(direction.multiplyScalar(SPHERE_RADIUS - 0.25).add(tangent.normalize().multiplyScalar(1.4)));
+  label.scale.set(5.6, 1.25, 1);
+  label.renderOrder = 6;
+  group.add(label);
+}
+
+export default function SkyMapGlobe({ targets, selectedId, onSelect, resetSignal, showGrid, showConstellations, showStarNames, focusedTarget, onHover }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const markerMap = useRef(new Map<string, THREE.Object3D>());
   const markerGroupRef = useRef<THREE.Group | null>(null);
@@ -240,6 +293,7 @@ export default function SkyMapGlobe({ targets, selectedId, onSelect, resetSignal
   const viewRef = useRef<{ reset: () => void; focus: (ra: number, dec: number) => void } | null>(null);
   const gridRef = useRef<THREE.Group | null>(null);
   const constellationsRef = useRef<THREE.Group | null>(null);
+  const starNamesRef = useRef<THREE.Group | null>(null);
   const hoveredRef = useRef<string | null>(null);
   const selectRef = useRef(onSelect);
   const hoverRef = useRef(onHover);
@@ -290,25 +344,36 @@ export default function SkyMapGlobe({ targets, selectedId, onSelect, resetSignal
     }
 
     // Real bright-star directions from the Hipparcos catalog form the subtle sky backdrop.
-    const starPositions: number[] = [];
+    const faintStarPositions: number[] = [];
+    const mediumStarPositions: number[] = [];
     const brightPositions: number[] = [];
     const starPositionsById = new Map<number, THREE.Vector3>();
     for (const [hip, ra, dec, magnitude] of brightStars as BrightStar[]) {
       const pos = skyPosition(ra, dec, SPHERE_RADIUS - 0.35);
       starPositionsById.set(hip, pos);
-      if (magnitude < 2.2) brightPositions.push(pos.x, pos.y, pos.z);
-      else starPositions.push(pos.x, pos.y, pos.z);
+      if (magnitude < 1.6) brightPositions.push(pos.x, pos.y, pos.z);
+      else if (magnitude < 3.5) mediumStarPositions.push(pos.x, pos.y, pos.z);
+      else faintStarPositions.push(pos.x, pos.y, pos.z);
     }
-    const starGeometry = new THREE.BufferGeometry();
-    starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-    // A cool white star field with the brightest guide stars given a larger point size.
-    const starMaterial = new THREE.PointsMaterial({ color: 0xb8d5ff, size: 0.12, sizeAttenuation: true, transparent: true, opacity: 0.74, depthWrite: false });
-    const starPoints = new THREE.Points(starGeometry, starMaterial);
-    globe.add(starPoints);
-    const brightGeometry = new THREE.BufferGeometry();
-    brightGeometry.setAttribute('position', new THREE.Float32BufferAttribute(brightPositions, 3));
-    const brightPoints = new THREE.Points(brightGeometry, new THREE.PointsMaterial({ color: 0xffd166, size: 0.28, sizeAttenuation: true, transparent: true, opacity: 0.98, depthWrite: false }));
-    globe.add(brightPoints);
+    const addStarLayer = (positions: number[], color: number, size: number, opacity: number) => {
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      const points = new THREE.Points(geometry, new THREE.PointsMaterial({ color, size, sizeAttenuation: true, transparent: true, opacity, depthWrite: false }));
+      globe.add(points);
+    };
+    // Three magnitude layers make bright guide stars stand out from the deeper Hipparcos field.
+    addStarLayer(faintStarPositions, 0x9fbee9, 0.14, 0.68);
+    addStarLayer(mediumStarPositions, 0xd2e2ff, 0.24, 0.88);
+    addStarLayer(brightPositions, 0xffd58a, 0.4, 1);
+
+    const starNames = new THREE.Group();
+    starNames.visible = showStarNames;
+    starNamesRef.current = starNames;
+    for (const [hip, name] of STAR_NAMES) {
+      const position = starPositionsById.get(hip);
+      if (position) addStarNameLabel(starNames, position, name);
+    }
+    globe.add(starNames);
 
     // This dotted band follows the ICRS galactic plane; its points are illustrative, not archive pixels.
     let randomSeed = 700700;
@@ -467,7 +532,8 @@ export default function SkyMapGlobe({ targets, selectedId, onSelect, resetSignal
         pitch += (focusAngles.pitch - pitch) * Math.min(1, delta * 3.2);
         if (Math.abs(yawDifference) < 0.002 && Math.abs(focusAngles.pitch - pitch) < 0.002) focusAngles = null;
       } else if (!dragging) {
-        yaw += delta * 0.055;
+        // Slow ambient drift keeps the planetarium view alive without making coordinates hard to follow.
+        yaw += delta * 0.006;
       }
       camera.rotation.set(pitch, Math.PI + yaw, 0, 'YXZ');
       try {
@@ -506,6 +572,7 @@ export default function SkyMapGlobe({ targets, selectedId, onSelect, resetSignal
       viewRef.current = null;
       gridRef.current = null;
       constellationsRef.current = null;
+      starNamesRef.current = null;
       markerGroupRef.current = null;
       scene.traverse((object) => {
         if (object instanceof THREE.Sprite) {
@@ -569,6 +636,10 @@ export default function SkyMapGlobe({ targets, selectedId, onSelect, resetSignal
   useEffect(() => {
     if (constellationsRef.current) constellationsRef.current.visible = showConstellations;
   }, [showConstellations]);
+
+  useEffect(() => {
+    if (starNamesRef.current) starNamesRef.current.visible = showStarNames;
+  }, [showStarNames]);
 
   useEffect(() => {
     if (!resetSignal) return;

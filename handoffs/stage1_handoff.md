@@ -116,7 +116,12 @@ Full checks: `./scripts/check.sh`
 
 ---
 
-## Stage 0 evidence (context for Stage 2)
+## Historical Stage 0 evidence (not the active archive configuration)
+
+These measurements were collected against the SPHEREx QR2 release and are kept
+for provenance only. QR2 has since been superseded and is no longer searchable;
+the running app and ingestion pipeline use `spherex_qr3`. Re-run current
+coverage checks against QR3 before using any Stage 0 counts or sample products.
 
 - IRSA SIA2 query works via `astroquery.ipac.irsa.Irsa.query_sia`.
 - `collection='spherex_qr2'` returns 415 rows for a 1-arcsec cone at

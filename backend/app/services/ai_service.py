@@ -1,6 +1,9 @@
 import math
 import random
 import re
+import json
+from pathlib import Path
+
 from astroquery.simbad import Simbad
 from astropy.coordinates import SkyCoord
 import astropy.units as u
@@ -44,9 +47,33 @@ KNOWN_TARGETS = {
 }
 
 
+def _load_messier_aliases() -> dict[str, tuple[float, float, str, float, None]]:
+    """Use the bundled Messier positions when SIMBAD is unavailable or a name is ambiguous."""
+    catalog_path = Path(__file__).resolve().parents[1] / "catalogs" / "messier_targets.json"
+    try:
+        entries = json.loads(catalog_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+    aliases: dict[str, tuple[float, float, str, float, None]] = {}
+    for entry in entries:
+        name = str(entry.get("name", "")).strip()
+        match = re.search(r"\bM\s*(\d+)\b", name, re.IGNORECASE)
+        if not name or not match:
+            continue
+        target = (float(entry["ra"]), float(entry["dec"]), name, 0.1, None)
+        aliases[_normalize_name(name)] = target
+        aliases[f"m{match.group(1)}"] = target
+        aliases[f"messier{match.group(1)}"] = target
+    return aliases
+
+
+MESSIER_TARGETS = _load_messier_aliases()
+
+
 def resolve_target(query: str) -> dict | None:
     normalized = _normalize_name(query.strip())
-    known = KNOWN_TARGETS.get(normalized)
+    known = KNOWN_TARGETS.get(normalized) or MESSIER_TARGETS.get(normalized)
     if known:
         ra, dec, name, radius, note = known
         object_type = "Galaxy" if "galaxy" in name.lower() else "Nebula" if "nebula" in name.lower() else "Known object"

@@ -13,11 +13,14 @@ analytics, and query examples. The original astronomy web app remains separate.
   scheduled runs. Two successful **scheduled** runs have not been independently
   evidenced in the project notes yet; check **Actions** before presenting R4.4-b
   as fully proven. A manual `workflow_dispatch` run does not count as scheduled
-  evidence.
+  evidence. It also runs on relevant pushes to `main`, requires the repository
+  secret `GCP_SERVICE_ACCOUNT_KEY`, and rebuilds curated models from existing
+  BigQuery raw data; it does not perform new IRSA ingestion.
 - Atlas summary sync is intentionally local because a GitHub-hosted runner's
   changing public IP cannot be safely allow-listed in the Atlas free project.
-- The live dashboard reads Atlas stream metrics. A second page queries BigQuery
-  and charts five measured insights.
+- The Streamlit Command Center reads MongoDB live metrics and alerts. Data Flow
+  interactively explains both the batch and live paths and lists retained fields.
+  Warehouse Insights queries BigQuery; it is a separate page and requires access.
 
 ## Start from Windows PowerShell
 
@@ -60,8 +63,9 @@ engine. The pipeline uses the local `.env`; keep it private.
    ```
 
    It publishes only synthetic demo traffic, including injected anomalies. Open
-   `http://localhost:8501`; use Streamlit's page selector to open **1_Warehouse
-   Insights** for BigQuery charts. Stop the live workers with
+   `http://localhost:8501` for the Streamlit **Cosmic Eye Command Center**.
+   Use the page selector for **Data Flow** (interactive pipeline map and field
+   catalog) or **Warehouse Insights** (BigQuery charts). Stop the live workers with
    `scripts\stop_streaming_demo.ps1`; stop/remove the broker with
    `scripts\stop-pipeline.ps1`.
 
@@ -90,13 +94,16 @@ flowchart LR
   LOAD --> RAW[BigQuery raw]
   RAW --> DBT[Scheduled dbt ETL]
   DBT --> CUR[BigQuery curated]
-  CUR --> MONGO[MongoDB Atlas summaries]
+  CUR -->|optional daily aggregates| MONGO_BATCH[MongoDB summaries]
   BUS --> SPARK[Spark Structured Streaming]
-  SPARK --> LIVE[Atlas live metrics and alerts]
-  LIVE --> DASH[Local Streamlit dashboard]
+  SPARK --> LIVE[MongoDB live metrics and alerts]
+  LIVE --> DASH[Streamlit Command Center]
   CUR --> INSIGHTS[Streamlit warehouse insights]
   GH[GitHub Actions hosted runner] --> DBT
 ```
+
+The Streamlit app also has a **Data Flow** page that interactively documents
+both paths and their captured fields; it is a guide, not another data sink.
 
 ## Project materials
 

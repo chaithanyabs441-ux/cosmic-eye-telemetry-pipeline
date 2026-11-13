@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Calendar, Globe2, Shuffle, Sparkles, Palette } from 'lucide-react';
+import { ArrowRight, Calendar, Globe2, Shuffle, Search, Palette } from 'lucide-react';
 import { getFeaturedTargets } from '../api/observations';
 import type { FeaturedTarget } from '../types/observation';
 
@@ -35,11 +35,11 @@ export default function HomePage() {
         </div>
 
         <div className="feature-grid">
-          <Link to="/ai-search" className="feature-card">
-            <div className="icon-box blue"><Sparkles size={20} /></div>
-            <h3>AI Search</h3>
-            <p>Look up a known object and find nearby SPHEREx observations.</p>
-            <span className="link-text">Go to AI <ArrowRight size={14}/></span>
+          <Link to="/explore" className="feature-card">
+            <div className="icon-box blue"><Search size={20} /></div>
+            <h3>Search</h3>
+            <p>Search by object name or sky coordinates to find SPHEREx observations.</p>
+            <span className="link-text">Search the archive <ArrowRight size={14}/></span>
           </Link>
           <Link to="/browse" className="feature-card">
             <div className="icon-box green"><Calendar size={20} /></div>
@@ -83,9 +83,9 @@ export default function HomePage() {
           <h3>Explore the Universe</h3>
           <p className="subtext">Dedicated tools for discovery</p>
           <div className="quick-links">
-            <Link to="/ai-search" className="q-link">
-              <div className="icon-box purple small"><Sparkles size={16} /></div>
-              <div><strong>AI Search</strong><span>Search any object in the universe</span></div>
+            <Link to="/explore" className="q-link">
+              <div className="icon-box purple small"><Search size={16} /></div>
+              <div><strong>Search</strong><span>Search by object name or coordinates</span></div>
               <ArrowRight size={16} className="ml-auto text-muted"/>
             </Link>
             <Link to="/browse" className="q-link">

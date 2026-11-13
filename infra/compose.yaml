@@ -36,7 +36,7 @@ services:
     environment:
       KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
       KAFKA_LIVE_TOPIC: ${KAFKA_LIVE_TOPIC:-cosmic-eye-live}
-      MONGODB_URI: ${MONGODB_URI:?Set MONGODB_URI in the repository .env file}
+      MONGODB_URI: ${MONGODB_URI_DOCKER:-${MONGODB_URI:?Set MONGODB_URI in the repository .env file}}
       MONGODB_DATABASE: ${MONGODB_DATABASE:-cosmic_eye}
       ALERT_LATENCY_MS: ${ALERT_LATENCY_MS:-5000}
       ALERT_NOISE_SIGMA: ${ALERT_NOISE_SIGMA:-1.1}
